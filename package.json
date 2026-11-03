@@ -1,0 +1,13 @@
+{
+  "name": "ag-nova-slate-hub",
+  "version": "0.2.0",
+  "description": "AG Nova Slate Hub - Minimalist e-ink dashboard for Kindle Paperwhite with slot-based admin UI",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.35.0"
+  }
+}

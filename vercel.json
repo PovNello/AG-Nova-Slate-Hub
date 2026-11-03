@@ -1,0 +1,16 @@
+{
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/api/dashboard" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+      { "key": "Referrer-Policy", "value": "no-referrer" }
+    ]}
+  ],
+  "crons": [
+    { "path": "/api/keepalive", "schedule": "0 4 * * *" }
+  ]
+}
