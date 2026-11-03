@@ -32,7 +32,7 @@
 
 For technical deep dives into data flow, Redis schema, and security architecture, see [ARCHITECTURE.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/ARCHITECTURE.md).  
 For release history, see [CHANGELOG.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/CHANGELOG.md).  
-For AI agent context and coding invariants, see [CLAUDE.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/CLAUDE.md) and [GEMINI.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/GEMINI.md).
+For AI agent context and coding invariants, see [AGENTS.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/AGENTS.md), [CLAUDE.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/CLAUDE.md), and [GEMINI.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/GEMINI.md).
 
 ---
 
@@ -40,7 +40,7 @@ For AI agent context and coding invariants, see [CLAUDE.md](file:///c:/Gemini%20
 
 - **Zero-Build Architecture**: Pure Node.js ES Modules on the backend (`api/` and `lib/`) and vanilla HTML/CSS/JS on the frontend (`public/`).
 - **Kindle WebKit Compatibility**: High-contrast, monochrome CSS with `-webkit-` vendor prefixes and inline ES5 scripts for smooth 1-minute clock updates without e-ink flashing.
-- **Dynamic 4-Slot Engine**: Customize `main`, `side1`, `side2`, and `footer` with modules:
+- **Orientation-Aware Slot Engine**: Supports native Portrait (`top`, `middle`, `bottom`) and Landscape (`main`, `side1`, `side2`, `footer`) with responsive flex distribution and zero text clipping:
   - `clock`: High-visibility time, stardate, day/month, and timezone.
   - `weather`: Real-time weather, min/max, humidity, wind, and forecast tables via Open-Meteo (no API key required).
   - `report`: Dynamic NASA-punk logs or custom status notes.

@@ -34,6 +34,11 @@ For Gemini agent instructions, see [GEMINI.md](file:///c:/Gemini%20projects/AG%2
 - **Session Cookie Security**: The `nova_admin` cookie must remain `HttpOnly; Secure; SameSite=Strict`.
 - **Rate Limiting**: `api/login.js` must record attempts prior to evaluating PIN correctness to prevent brute-force timing vectors.
 
+### 5. Mandatory Changelog & Documentation Updates
+- **EVERY action, code modification, feature addition, bug fix, or refactor MUST result in an update to `CHANGELOG.md`.**
+- If an action modifies architectural behavior, slot logic, layout mechanics, endpoints, or configuration, the agent MUST immediately update or create relevant documentation (e.g. `ARCHITECTURE.md`, `README.md`).
+- Never complete a task or user turn without ensuring `CHANGELOG.md` reflects all changes made.
+
 ---
 
 ## 2. Directory Layout & Routing Map
@@ -74,4 +79,5 @@ ag-nova-slate-hub/
   - `DASHBOARD_TOKEN`: 32-character hex secret for `/dashboard?k=...`.
   - `CRON_SECRET`: 32-character hex secret sent by Vercel cron as Bearer token.
 - **Testing Changes**: When modifying `lib/render.js`, ensure both 0° and rotated (90°/270°) outputs render cleanly without overflowing Kindle viewport dimensions (`100vw`/`100vh`).
+- **Mandatory Documentation Invariant**: Every code or design change must be reflected in `CHANGELOG.md` and related documentation before concluding a task.
 

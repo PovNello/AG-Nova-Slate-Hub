@@ -104,7 +104,21 @@ ag-nova-slate-hub/
 
 ## 3. Data Flow & Slot Engine
 
-The dashboard layout is modular and driven by a four-slot arrangement managed in `lib/render.js`:
+The dashboard layout is modular and driven by an orientation-aware slot engine managed in `lib/render.js` and `lib/config.js`:
+
+### Portrait Mode (Default / Native Kindle)
+Optimized for the Kindle Experimental Browser's native portrait viewport (3:4 ratio):
+
+| Slot Identifier | Layout Position | Typical Module | Description |
+| :--- | :--- | :--- | :--- |
+| `top` | Vertical stack: top pane | `clock` | High-impact chronometer, stardate, day/month, and timezone |
+| `middle` | Vertical stack: center pane | `weather` | Current temperature, WMO icon/status, humidity, wind, and forecast table |
+| `bottom` | Vertical stack: bottom pane | `report` | Dynamic terminal status quote or mission notes |
+
+*Active panels dynamically share vertical height using flexbox (`flex: 1`), automatically expanding if any slot is set to `none`.*
+
+### Landscape Mode (Roadmap)
+Designed for horizontal screens and mounted devices:
 
 | Slot Identifier | CSS Grid Role | Typical Module | Description |
 | :--- | :--- | :--- | :--- |
@@ -117,7 +131,7 @@ The dashboard layout is modular and driven by a four-slot arrangement managed in
 1. **`clock`**: Displays active time, optional 24h format, localized formatted date, and active timezone.
 2. **`weather`**: Fetches weather metrics from Open-Meteo, with a configurable 3-hour interval forecast (up to 6 slots).
 3. **`report`**: Randomly samples one line from the user's custom `report.lines` array on each refresh.
-4. **`none`**: Renders an empty cell to allow asymmetric layouts.
+4. **`none`**: Renders an empty cell to allow flexible asymmetric layouts.
 
 ---
 

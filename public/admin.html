@@ -54,16 +54,19 @@ textarea{resize:vertical;line-height:1.5}
 .layout{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:16px}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
 .sticky{position:sticky;top:16px}
-.schematic{display:grid;grid-template-columns:3fr 2fr;gap:8px}
+.schematic{display:flex;flex-direction:column;gap:8px}
+.schematic.landscape{display:grid;grid-template-columns:3fr 2fr;gap:8px}
+.schematic.landscape .slot[data-slot=main]{grid-row:1/3}
+.schematic.landscape .slot[data-slot=footer]{grid-column:1/3}
 .slot{border:1px solid var(--cyan-d);padding:10px;background:rgba(79,211,220,.04)}
 .slot.empty{border:1px dashed var(--line);background:none}
-.slot[data-slot=main]{grid-row:1/3}
-.slot[data-slot=footer]{grid-column:1/3}
 .slot-name{display:block;font-size:10px;letter-spacing:.2em;color:var(--dim);margin-bottom:6px}
 .geo{list-style:none;padding:0;margin:0 0 12px;border:1px dashed var(--line)}
 .geo button{width:100%;text-align:left;background:none;border:0;color:var(--text);font-family:var(--mono);font-size:12px;padding:8px 10px;cursor:pointer}
 .geo button:hover{background:var(--bg2);color:var(--cyan)}
-.preview{aspect-ratio:4/3;background:#fff;border:6px solid #2b3036}
+.preview-wrap{display:flex;justify-content:center}
+.preview{width:100%;aspect-ratio:3/4;max-width:390px;background:#fff;border:8px solid #2b3036;border-radius:4px;box-shadow:0 12px 32px rgba(0,0,0,.6)}
+.preview.landscape{aspect-ratio:4/3;max-width:100%}
 .preview iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(1)}
 .link{font-size:12px;word-break:break-all;background:var(--bg2);border:1px dashed var(--line);padding:10px;margin-bottom:12px;color:var(--cyan)}
 </style>
@@ -95,8 +98,8 @@ textarea{resize:vertical;line-height:1.5}
 
   <div class="layout">
     <div>
-      <section class="panel"><div class="panel-tag">[01] SLOT LAYOUT</div>
-        <div class="schematic" id="schematic"></div>
+      <section class="panel"><div class="panel-tag" id="schematic-tag">[01] SLOT LAYOUT // PORTRAIT</div>
+        <div class="schematic portrait" id="schematic"></div>
       </section>
 
       <section class="panel"><div class="panel-tag">[02] TERMINAL</div>
@@ -105,6 +108,12 @@ textarea{resize:vertical;line-height:1.5}
           <label class="field"><span>TIMEZONE</span><input data-path="timezone"></label>
         </div>
         <div class="row">
+          <label class="field"><span>ORIENTATION</span>
+            <select data-path="orientation" id="orientation-select">
+              <option value="portrait">PORTRAIT (Kindle Native / Active)</option>
+              <option value="landscape" disabled>LANDSCAPE (Roadmap — Coming Soon)</option>
+            </select>
+          </label>
           <label class="field"><span>PAGE REFRESH (MIN)</span><input data-path="refreshMinutes" data-type="number" type="number" min="5" max="120"></label>
           <label class="field"><span>ROTATION</span>
             <select data-path="rotation" data-type="number">
@@ -140,8 +149,8 @@ textarea{resize:vertical;line-height:1.5}
     </div>
 
     <div>
-      <section class="panel sticky"><div class="panel-tag">[PRV] KINDLE PREVIEW // LANDSCAPE</div>
-        <div class="preview"><iframe id="preview" title="Preview" sandbox="allow-scripts"></iframe></div>
+      <section class="panel sticky"><div class="panel-tag" id="preview-tag">[PRV] KINDLE PREVIEW // PORTRAIT</div>
+        <div class="preview-wrap"><div class="preview" id="preview-box"><iframe id="preview" title="Preview" sandbox="allow-scripts"></iframe></div></div>
         <div class="dim small">Draft preview. The Kindle terminal displays committed configurations only.</div>
       </section>
       <section class="panel"><div class="panel-tag">[LNK] TERMINAL LINK</div>
@@ -157,13 +166,17 @@ textarea{resize:vertical;line-height:1.5}
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
   const MODULES = { none: '— EMPTY —', clock: 'CHRONOMETER', weather: 'ATMOS / WEATHER', report: 'N.O.V.A. REPORT' };
-  const SLOTS = { main: 'MAIN', side1: 'SIDE 01', side2: 'SIDE 02', footer: 'FOOTER' };
+  const PORTRAIT_SLOTS = { top: 'SLOT 01 // TOP', middle: 'SLOT 02 // MIDDLE', bottom: 'SLOT 03 // BOTTOM' };
+  const LANDSCAPE_SLOTS = { main: 'MAIN', side1: 'SIDE 01', side2: 'SIDE 02', footer: 'FOOTER' };
   let cfg = null, saved = '', previewTimer = null;
 
-  const get = (path) => path.split('.').reduce((o, k) => o[k], cfg);
+  const get = (path) => path.split('.').reduce((o, k) => o && o[k], cfg);
   const set = (path, value) => {
     const keys = path.split('.'); const last = keys.pop();
     keys.reduce((o, k) => o[k], cfg)[last] = value;
+    if (path === 'orientation') {
+      buildSchematic();
+    }
     changed();
   };
   const setStatus = (text, warn) => { const s = $('#status'); s.textContent = text; s.classList.toggle('warn', !!warn); };
@@ -194,29 +207,45 @@ textarea{resize:vertical;line-height:1.5}
   // ---------- EDITOR ----------
   function buildSchematic() {
     const box = $('#schematic'); box.textContent = '';
-    for (const [slot, label] of Object.entries(SLOTS)) {
+    const isLand = cfg?.orientation === 'landscape';
+    box.className = 'schematic ' + (isLand ? 'landscape' : 'portrait');
+    const tag = $('#schematic-tag');
+    if (tag) tag.textContent = isLand ? '[01] SLOT LAYOUT // LANDSCAPE' : '[01] SLOT LAYOUT // PORTRAIT';
+
+    const slotsDef = isLand ? LANDSCAPE_SLOTS : PORTRAIT_SLOTS;
+    const slotGroup = isLand ? 'landscape' : 'portrait';
+
+    for (const [slot, label] of Object.entries(slotsDef)) {
       const div = document.createElement('div'); div.className = 'slot'; div.dataset.slot = slot;
       const name = document.createElement('span'); name.className = 'slot-name'; name.textContent = label;
       const sel = document.createElement('select');
       for (const [m, ml] of Object.entries(MODULES)) sel.add(new Option(ml, m));
-      sel.addEventListener('change', () => set('slots.' + slot, sel.value));
+      sel.addEventListener('change', () => set(`slots.${slotGroup}.${slot}`, sel.value));
       div.append(name, sel); box.append(div);
     }
   }
 
   function render() {
+    const isLand = cfg.orientation === 'landscape';
+    const slotsObj = isLand ? (cfg.slots?.landscape || {}) : (cfg.slots?.portrait || {});
     for (const div of $$('.slot')) {
-      const v = cfg.slots[div.dataset.slot];
+      const v = slotsObj[div.dataset.slot] || 'none';
       div.querySelector('select').value = v; div.classList.toggle('empty', v === 'none');
     }
     for (const el of $$('[data-path]')) {
       if (el.classList.contains('toggle')) el.classList.toggle('on', !!get(el.dataset.path));
       else if (document.activeElement !== el) el.value = get(el.dataset.path);
     }
-    const used = Object.values(cfg.slots);
-    for (const p of $$('[data-module]')) p.hidden = !used.includes(p.dataset.module);
+    const activeSlots = Object.values(slotsObj);
+    for (const p of $$('[data-module]')) p.hidden = !activeSlots.includes(p.dataset.module);
     if (document.activeElement !== $('#report-lines')) $('#report-lines').value = cfg.report.lines.join('\n');
     $('#coords').textContent = `COORD ${cfg.weather.latitude}, ${cfg.weather.longitude}`;
+
+    const previewBox = $('#preview-box');
+    if (previewBox) previewBox.classList.toggle('landscape', isLand);
+    const previewTag = $('#preview-tag');
+    if (previewTag) previewTag.textContent = isLand ? '[PRV] KINDLE PREVIEW // LANDSCAPE' : '[PRV] KINDLE PREVIEW // PORTRAIT';
+
     const dirty = JSON.stringify(cfg) !== saved;
     $('#save').disabled = !dirty;
     if (dirty) setStatus('UNSAVED CHANGES', true);
@@ -285,6 +314,7 @@ textarea{resize:vertical;line-height:1.5}
       $('#kindle-url').textContent = j.kindleUrl || 'DASHBOARD_TOKEN NOT CONFIGURED';
       $('#view-login').hidden = true; $('#view-editor').hidden = false;
       setStatus('CONFIG LOADED');
+      buildSchematic();
       render(); refreshPreview();
     } catch {}
   }

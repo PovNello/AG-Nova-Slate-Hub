@@ -33,6 +33,11 @@ For Claude agent instructions, see [CLAUDE.md](file:///c:/Gemini%20projects/AG%2
 - **Session Protection**: Ensure the `nova_admin` cookie keeps `HttpOnly; Secure; SameSite=Strict`.
 - **IP Rate Limiting**: All login attempts must be incremented in Redis before PIN evaluation.
 
+### 5. Mandatory Changelog & Documentation Updates
+- **EVERY action, code modification, feature addition, bug fix, or refactor MUST result in an update to `CHANGELOG.md`.**
+- If an action modifies architectural behavior, slot logic, layout mechanics, endpoints, or configuration, the agent MUST immediately update or create relevant documentation (e.g. `ARCHITECTURE.md`, `README.md`).
+- Never complete a task or user turn without ensuring `CHANGELOG.md` reflects all changes made.
+
 ---
 
 ## 2. Architecture & File Reference
@@ -74,4 +79,5 @@ ag-nova-slate-hub/
   - `DASHBOARD_TOKEN`: 32-character hex key for Kindle URL verification (`openssl rand -hex 16`).
   - `CRON_SECRET`: 32-character hex key for Vercel cron Bearer auth (`openssl rand -hex 16`).
 - **Code Edits**: Keep changes minimal, clean, and modular. Read [ARCHITECTURE.md](file:///c:/Gemini%20projects/AG%20Nova%20Slate%20Hub/ARCHITECTURE.md) before making changes to slot logic or Redis keys.
+- **Mandatory Documentation Invariant**: Every code or design change must be reflected in `CHANGELOG.md` and related documentation before finishing the task.
 
