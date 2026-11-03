@@ -78,6 +78,6 @@ ag-nova-slate-hub/
   - `SESSION_SECRET`: 64-character hex secret for HMAC session signing.
   - `DASHBOARD_TOKEN`: 32-character hex secret for `/dashboard?k=...`.
   - `CRON_SECRET`: 32-character hex secret sent by Vercel cron as Bearer token.
-- **Testing Changes**: When modifying `lib/render.js`, ensure both 0° and rotated (90°/270°) outputs render cleanly without overflowing Kindle viewport dimensions (`100vw`/`100vh`).
+- **Testing Changes**: When modifying `lib/render.js`, ensure all four device rotations (portrait 0°/180°, landscape 90°/270°) render cleanly without overflowing Kindle viewport dimensions (`100vw`/`100vh`), including uneven row weights and column splits.
 - **Mandatory Documentation Invariant**: Every code or design change must be reflected in `CHANGELOG.md` and related documentation before concluding a task.
 

@@ -9,6 +9,28 @@ For installation and quickstart, refer to [README.md](file:///c:/Gemini%20projec
 
 ---
 
+## [0.4.0] - 2026-11-03
+
+### Added
+- **Landscape Mode Enabled**: Landscape is now a fully active orientation, selectable through `PORTRAIT` / `LANDSCAPE` mode buttons in the admin layout panel.
+- **Flip Screen (180°)**: New `flipped` toggle replaces the free rotation dropdown. Portrait renders at 0° / 180°, landscape at 90° / 270°. Added the `.rot180` transform class and `rotationOf()` helper.
+- **Weighted Row Engine**: Portrait uses 3 rows; landscape uses a 3 rows x 2 columns grid. Each row has a height weight (0.5 to 6), and each landscape row has its own column split (presets 50/50, 60/40, 67/33, 70/30, 40/60, 33/67, 30/70).
+- **Auto-Expand**: In landscape, a row with a single filled column expands that module to 100% of the row width.
+- **Box-Aware Typography**: Module text is now in `em` and each panel gets a server-computed scale from its box size, so modules stay proportionate in large rows and narrow columns.
+- **Interactive Schematic**: Admin shows per-row height inputs with live height percentages, split selectors, proportional column previews, and COLLAPSED / AUTO-EXPANDED indicators.
+
+### Changed
+- **Config Schema v3**: Replaced `slots` and `rotation` with `layout.portrait.rows`, `layout.landscape.rows` and `flipped`. v1 and v2 configs in Redis are migrated automatically on read.
+- **Preview Rendering**: `/api/preview` renders without device rotation inside a 3:4 or 4:3 frame; the preview header shows the flip state.
+- **Clock Script**: Updates every `nova-clock` element instead of a single id, so a clock can be placed in more than one slot. Still strict ES5.
+- **Rows Collapse**: Empty rows collapse and the remaining rows re-share the height by weight.
+- **Documentation**: Updated `ARCHITECTURE.md` (layout engine, rotation table, sizing and migration rules), `README.md` and `CLAUDE.md` test guidance.
+
+### Removed
+- Orientation dropdown with the disabled landscape option, and the 0° / 90° / 270° rotation dropdown.
+
+---
+
 ## [0.3.0] - 2026-11-03
 
 ### Added

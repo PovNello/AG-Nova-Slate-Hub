@@ -102,36 +102,74 @@ ag-nova-slate-hub/
 
 ---
 
-## 3. Data Flow & Slot Engine
+## 3. Data Flow & Layout Engine
 
-The dashboard layout is modular and driven by an orientation-aware slot engine managed in `lib/render.js` and `lib/config.js`:
+The dashboard layout is driven by a weighted row engine in `lib/render.js`, configured through the `layout` object in `lib/config.js` (schema version 3).
 
-### Portrait Mode (Default / Native Kindle)
-Optimized for the Kindle Experimental Browser's native portrait viewport (3:4 ratio):
+### Orientation & Flip
 
-| Slot Identifier | Layout Position | Typical Module | Description |
+The Kindle browser always renders in its native portrait viewport. Orientation is therefore applied in software, and the operator only chooses an orientation plus a 180° flip:
+
+| `orientation` | `flipped: false` | `flipped: true` | Use case |
 | :--- | :--- | :--- | :--- |
-| `top` | Vertical stack: top pane | `clock` | High-impact chronometer, stardate, day/month, and timezone |
-| `middle` | Vertical stack: center pane | `weather` | Current temperature, WMO icon/status, humidity, wind, and forecast table |
-| `bottom` | Vertical stack: bottom pane | `report` | Dynamic terminal status quote or mission notes |
+| `portrait` | 0° | 180° (`.rot180`) | Upright, or upside down with the cable pointing up |
+| `landscape` | 90° (`.rot90`) | 270° (`.rot270`) | Device resting on either long side |
 
-*Active panels dynamically share vertical height using flexbox (`flex: 1`), automatically expanding if any slot is set to `none`.*
+`rotationOf(cfg)` in `lib/config.js` is the single source of truth for this mapping. The admin preview (`/api/preview`) renders the logical layout **without** rotation inside a 3:4 or 4:3 frame, so it stays readable while editing; the flip state is shown in the preview header.
 
-### Landscape Mode (Roadmap)
-Designed for horizontal screens and mounted devices:
+### Portrait Layout (3 Rows)
 
-| Slot Identifier | CSS Grid Role | Typical Module | Description |
-| :--- | :--- | :--- | :--- |
-| `main` | `grid-row: 1 / 3` (Dominant left pane) | `clock` | High-impact clock, stardate, day/month, and timezone |
-| `side1` | Right pane, top module | `weather` | Current temperature, WMO icon/status, humidity, wind, and forecast table |
-| `side2` | Right pane, lower module | `none` or extra | Optional secondary widget |
-| `footer` | Full-width bottom bar (`grid-column: 1 / 3`) | `report` | Dynamic terminal status quote or mission notes |
+```js
+layout.portrait.rows = [
+  { height: 2, module: 'clock' },    // 50%
+  { height: 1, module: 'weather' },  // 25%
+  { height: 1, module: 'report' },   // 25%
+]
+```
+
+### Landscape Layout (3 Rows x 2 Columns)
+
+Row priority: rows first share the height by weight, then each row splits its own width between two columns.
+
+```js
+layout.landscape.rows = [
+  { height: 2, split: [3, 2], cols: ['clock', 'weather'] },  // 50% height, 60/40 width
+  { height: 1, split: [1, 1], cols: ['none', 'none'] },      // collapsed
+  { height: 1, split: [1, 1], cols: ['report', 'none'] },    // auto-expanded to 100% width
+]
+```
+
+### Sizing Rules
+
+| Rule | Behaviour |
+| :--- | :--- |
+| Row height | `height` weight, 0.5 to 6 in 0.5 steps. Share = weight / sum of the visible rows' weights. |
+| Column split | `split: [left, right]`, integers 1 to 9. Admin presets: 50/50, 60/40, 67/33, 70/30, 40/60, 33/67, 30/70. Other saved ratios show as CUSTOM. |
+| Empty row | A portrait row with `none`, or a landscape row with both columns `none`, collapses; the remaining rows re-share the height. |
+| Auto-expand | In landscape, if one column is `none`, the other takes 100% of the row width and the split is ignored. |
+| Kindle flex | Weights are emitted as integers (`height x 2`) using `-webkit-box-flex`, `-webkit-flex` and `flex`, because legacy `-webkit-box-flex` is unreliable with decimals. |
+
+### Typography Scaling
+
+Frame chrome (status bars, panel tags, borders) is sized in `vmin`. Module typography is sized in `em`, and each panel receives an inline `font-size: <scale>vmin`. The scale is computed server-side from the box's estimated size against a reference box for each orientation (`REF` in `lib/render.js`):
+- `clock` and `weather`: `min(widthRatio, heightRatio)`, clamped 0.45 to 1.6, so big numbers never exceed either dimension.
+- `report`: `sqrt(widthRatio x heightRatio)`, clamped 0.7 to 1.4, so flowing text stays legible in wide, short rows.
+
+Very small boxes (for example a 0.5 weight row with a 30% column) can still clip secondary content such as the forecast table; panels use `overflow: hidden`, so nothing leaks outside the box.
+
+### Schema Migration
+
+`sanitizeConfig` upgrades stored configs automatically:
+- v1 flat `slots` and v2 `slots.portrait` / `slots.landscape` are mapped onto v3 rows (portrait rows get weight 1 each; landscape `main`+`side1` become row 1 at 60/40, `side2` row 2, `footer` row 3).
+- v2 `rotation: 270` in landscape becomes `flipped: true`; every other v2 rotation becomes `flipped: false`.
 
 ### Available Modules
 1. **`clock`**: Displays active time, optional 24h format, localized formatted date, and active timezone.
 2. **`weather`**: Fetches weather metrics from Open-Meteo, with a configurable 3-hour interval forecast (up to 6 slots).
 3. **`report`**: Randomly samples one line from the user's custom `report.lines` array on each refresh.
-4. **`none`**: Renders an empty cell to allow flexible asymmetric layouts.
+4. **`none`**: Empty cell. Collapses its row (portrait) or lets the other column auto-expand (landscape).
+
+Several slots may use the same module (for example two clocks); the ES5 clock script updates every element with the `nova-clock` class.
 
 ---
 
@@ -143,7 +181,7 @@ All persistent state is stored in Upstash Redis via `@upstash/redis`:
 nova:config
   Type: JSON Object / String
   TTL: None (Persistent)
-  Description: Active committed configuration (version, slots, weather coords, report lines).
+  Description: Active committed configuration (version 3: orientation, flipped, layout rows, weather coords, report lines).
 
 nova:ratelimit:login:<ip>
   Type: Integer Counter
@@ -195,8 +233,8 @@ The Kindle Paperwhite 11 runs a specialized, power-constrained WebKit engine in 
    The inline clock updating mechanism injected into the dashboard uses strict ES5 (`var`, `function`, legacy DOM methods). Modern ES6+ features (`const`, `let`, arrow functions) can crash or stall the Kindle browser.
 2. **Monochrome High-Contrast Palette**:
    The dashboard CSS uses strict pure black (`#000`) and pure white (`#fff`) with geometric borders (`vmin`-based units). Grayscale shades are avoided on critical typography to prevent e-ink ghosting.
-3. **Native vs. CSS Rotation**:
-   If the Kindle is physically placed in landscape orientation, `rotation: 0` is preferred if the browser handles orientation. When mounted in fixed brackets, `rotation: 90` or `rotation: 270` handles software CSS transforms with `-webkit-` vendor prefixes.
+3. **Software Rotation**:
+   The Kindle browser is kept in its native portrait mode. Landscape and flipped layouts are drawn with CSS transforms (`.rot90`, `.rot180`, `.rot270`, all with `-webkit-` prefixes) driven by `orientation` + `flipped`. Free rotation values are no longer accepted.
 4. **Meta Refresh Cycle**:
    The dashboard automatically refreshes the entire document via `<meta http-equiv="refresh" content="...">` every `N` minutes (default 15). The client ES5 script handles the minute-by-minute clock ticks between full page refreshes to conserve battery and avoid screen flashes.
 

@@ -40,7 +40,7 @@ For AI agent context and coding invariants, see [AGENTS.md](file:///c:/Gemini%20
 
 - **Zero-Build Architecture**: Pure Node.js ES Modules on the backend (`api/` and `lib/`) and vanilla HTML/CSS/JS on the frontend (`public/`).
 - **Kindle WebKit Compatibility**: High-contrast, monochrome CSS with `-webkit-` vendor prefixes and inline ES5 scripts for smooth 1-minute clock updates without e-ink flashing.
-- **Orientation-Aware Slot Engine**: Supports native Portrait (`top`, `middle`, `bottom`) and Landscape (`main`, `side1`, `side2`, `footer`) with responsive flex distribution and zero text clipping:
+- **Weighted Row Layout Engine**: Portrait uses 3 stacked rows; Landscape uses a 3 rows x 2 columns grid. Each row has a height weight, and in landscape each row has its own column split. A single filled column auto-expands to the full row width. Modules available per slot:
   - `clock`: High-visibility time, stardate, day/month, and timezone.
   - `weather`: Real-time weather, min/max, humidity, wind, and forecast tables via Open-Meteo (no API key required).
   - `report`: Dynamic NASA-punk logs or custom status notes.
@@ -102,7 +102,8 @@ Redeploy the project once the variables are saved.
    - Open the **Experimental Browser** (`Menu &rarr; Experimental Browser`).
    - Navigate to the copied URL.
    - Bookmark the page for immediate one-tap access.
-   - Rotate your device horizontally into landscape orientation. If your Kindle does not auto-rotate, adjust the **ROTATION** setting in `/admin` to `90°` or `270°`.
+   - Choose **PORTRAIT** or **LANDSCAPE** in `/admin`. Landscape is rendered rotated in software (90°), so keep the Kindle browser in its normal upright mode and turn the device sideways.
+   - Use **FLIP SCREEN (180°)** to match how the device is mounted: portrait 0° / 180°, landscape 90° / 270°.
 
 ---
 
