@@ -92,8 +92,12 @@ ag-nova-slate-hub/
 │   ├── security.js         # Constant-time comparison & HMAC session cookies
 │   └── weather.js          # Open-Meteo WMO decoder and forecast fetcher
 ├── public/                 # Static assets served directly by edge CDN
-│   ├── admin.html          # Single-file NASA-punk configuration panel
-│   └── index.html          # Fallback root landing page
+│   ├── admin.html          # NASA-punk configuration panel (inline JS, framework CSS)
+│   ├── index.html          # Signal terminal landing page
+│   ├── slate-hub-logo.svg  # Brand mark and favicon
+│   ├── css/                # 00 fonts, 01-06 vendored AG Nova framework, 08 Slate Hub extensions
+│   ├── fonts/              # Self-hosted Space Grotesk, Inter Tight, IBM Plex Mono (OFL 1.1)
+│   └── js/                 # nova-shell.js (entrance animation release, stardate)
 ├── vercel.json             # Routing rewrites, security headers, and cron specs
 ├── package.json            # Project metadata; single dependency (@upstash/redis)
 ├── .env.example            # Environment variable template
@@ -238,3 +242,47 @@ The Kindle Paperwhite 11 runs a specialized, power-constrained WebKit engine in 
 4. **Meta Refresh Cycle**:
    The dashboard automatically refreshes the entire document via `<meta http-equiv="refresh" content="...">` every `N` minutes (default 15). The client ES5 script handles the minute-by-minute clock ticks between full page refreshes to conserve battery and avoid screen flashes.
 
+---
+
+## 7. Visual System
+
+The admin panel (`/admin`) and the landing page (`/`) are built on the AG Nova visual framework, the same one used by the other AG Nova sites. The Kindle dashboard is deliberately outside this system.
+
+### Stylesheet stack
+
+Load order is the same in `index.html` and `admin.html`:
+
+| File | Role | Editable here? |
+| :--- | :--- | :--- |
+| `00-fonts.css` | `@font-face` for the three font roles, self-hosted from `public/fonts/` | Yes |
+| `01-tokens.css` | Colour, type, spacing, structure and motion variables | No (vendored) |
+| `02-base.css` | Reset, typography defaults, scrollbars, scanline overlay | No (vendored) |
+| `03-layout.css` | OS shell, header strip, viewport, grids, taskbar | No (vendored) |
+| `04-components.css` | Panels, keys, buttons, chips, data rows, voice block | No (vendored) |
+| `05-animations.css` | Cross-document view transitions, panel flicker, pulse | No (vendored) |
+| `06-responsive.css` | Tablet and pocket-datapad breakpoints | No (vendored) |
+| `08-slatehub.css` | Slate Hub only: form controls, toggle, slot schematic, preview bezel, landing cards | Yes, tokens only |
+
+`07-uplink.css` (the N.O.V.A. chat view) is not used by Slate Hub and is intentionally not included.
+
+### Rules
+
+- Files `01` to `06` are byte-identical copies of the framework. Updating the look means replacing them, never patching them.
+- `08-slatehub.css` never overrides a framework class. New classes carry the `hub-` prefix and read colours, type and spacing only through `var(--...)` tokens.
+- Colour is semantic. Cyan marks live or operational state (active mode button, `LIVE` chips, preview and link panels), orange marks work in progress (`UNSAVED CHANGES`, auto-expanded slots, flip engaged), ivory marks the N.O.V.A. voice (report panel, system note), and danger is reserved for genuine failures (wrong PIN, lockout, save error).
+- Pages share one shell: header strip, `nova-viewport`, and the taskbar as the only navigation (`HUB`, `ADMIN CONSOLE`). Header and taskbar are named view-transition elements, so only the viewport animates between `/` and `/admin`.
+- `public/js/nova-shell.js` adds the `is-ready` class that releases the paused panel entrance animation and fills `[data-stardate]` with the same `YY.DOY` format the Kindle dashboard uses. A `<noscript>` rule disables the entrance animation when scripts are off.
+
+### Fonts
+
+| Role | Token | Family | Files |
+| :--- | :--- | :--- | :--- |
+| Structure | `--font-heading` | Space Grotesk | `space-grotesk-var.woff2` (variable) |
+| Reading | `--font-body` | Inter Tight | `inter-tight-var.woff2` (variable) |
+| Data | `--font-mono` | IBM Plex Mono | `ibm-plex-mono-400/500/600/700.woff2` |
+
+`vercel.json` serves `/fonts/*` with a one-week cache and `Access-Control-Allow-Origin: *`. The CORS header is required because the admin preview iframe is sandboxed (opaque origin), so its font requests are cross-origin.
+
+### Kindle dashboard exception
+
+`lib/render.js` keeps its own monochrome `#000` / `#fff` stylesheet. The only brand alignment is the font: it declares IBM Plex Mono 400 and 700 (WOFF2 with a WOFF fallback for the legacy WebKit engine) and falls back to Courier New. Both fonts advance 0.6 em per glyph, so the box-sizing engine and every layout calculation are unchanged.

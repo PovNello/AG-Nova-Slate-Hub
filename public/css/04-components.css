@@ -1,0 +1,773 @@
+/* ==========================================================================
+   AG NOVA — 04 COMPONENTS
+   Panels, keys, chips, bars, data rows, log entries, dossiers.
+   Every reusable piece of hardware lives here.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PANEL — the fundamental unit of the interface
+   -------------------------------------------------------------------------- */
+
+.nova-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--nova-panel);
+  border: var(--border-structural) solid var(--nova-border);
+  clip-path: polygon(
+    0 0, calc(100% - var(--chamfer)) 0, 100% var(--chamfer),
+    100% 100%, var(--chamfer) 100%, 0 calc(100% - var(--chamfer))
+  );
+  box-shadow: 
+    inset 0 1px 0 0 var(--nova-highlight),
+    inset 0 4px 16px var(--nova-recess);
+  min-width: 0;
+}
+
+/* Faint internal grid so panel interiors read as machined surfaces */
+.nova-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--nova-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--nova-grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.16;
+}
+
+.nova-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.nova-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--nova-panel-alt);
+  border-bottom: var(--border-thin) solid var(--nova-border);
+}
+
+.nova-panel__code {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-cyan);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nova-panel__state {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nova-panel__body {
+  padding: var(--sp-4);
+  flex: 1;
+  min-width: 0;
+}
+
+.nova-panel__body--tight { padding: var(--sp-3); }
+.nova-panel__body--flush { padding: 0; }
+
+.nova-panel__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-top: var(--border-thin) dashed var(--nova-grid);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+/* Accent variants — border colour carries semantic meaning */
+.nova-panel--cyan   { border-color: var(--nova-cyan-line); }
+.nova-panel--orange { border-color: var(--nova-orange-line); }
+.nova-panel--ivory  { border-color: var(--nova-ivory-line); }
+
+.nova-panel--cyan   > .nova-panel__head { box-shadow: inset 0 -1px 0 var(--nova-cyan-line); }
+.nova-panel--orange > .nova-panel__head { box-shadow: inset 0 -1px 0 var(--nova-orange-line); }
+.nova-panel--orange > .nova-panel__head .nova-panel__code { color: var(--nova-orange); }
+.nova-panel--ivory  > .nova-panel__head .nova-panel__code { color: var(--nova-ivory); }
+
+/* --------------------------------------------------------------------------
+   TASKBAR KEY — a physical backlit switch
+   -------------------------------------------------------------------------- */
+
+.nova-key {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-2) var(--sp-2);
+
+  background: var(--nova-panel);
+  border: var(--border-structural) solid var(--nova-border);
+  clip-path: polygon(
+    0 0, calc(100% - var(--chamfer-sm)) 0, 100% var(--chamfer-sm),
+    100% 100%, var(--chamfer-sm) 100%, 0 calc(100% - var(--chamfer-sm))
+  );
+
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+
+  /* The key sits proud of the chassis. Pressing it removes the lip. */
+  box-shadow:
+    inset 0 1px 0 rgba(243, 243, 238, 0.07),
+    0 2px 0 0 #0a1420;
+
+  transition:
+    transform var(--t-press) var(--ease-mechanical),
+    box-shadow var(--t-press) var(--ease-mechanical),
+    background-color var(--t-hover) var(--ease-snap),
+    color var(--t-hover) var(--ease-snap),
+    border-color var(--t-hover) var(--ease-snap);
+}
+
+.nova-key:hover {
+  background: var(--nova-panel-alt);
+  color: var(--nova-text-primary);
+  border-color: var(--nova-cyan-line);
+  box-shadow: inset 0 0 8px var(--nova-cyan-dim);
+}
+
+/* Mechanical press: travel down, lose the lip, gain an inner shadow.
+   Reads as a switch bottoming out rather than a soft UI fade. */
+.nova-key:active {
+  transform: translateY(2px) scale(0.985);
+  box-shadow: inset 0 2px 5px rgba(8, 17, 27, 0.85);
+}
+
+/* Pressed and backlit — the current section */
+.nova-key[aria-current="page"] {
+  background: var(--nova-cyan);
+  border-color: var(--nova-cyan-bright);
+  color: var(--nova-space);
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 2px 6px rgba(8, 17, 27, 0.32),
+    0 0 0 1px var(--nova-cyan-dim);
+  cursor: default;
+}
+
+.nova-key__long { display: inline; }
+.nova-key__short { display: none; }
+
+/* --------------------------------------------------------------------------
+   ACTION BUTTON — mission links and external actions
+   -------------------------------------------------------------------------- */
+
+.nova-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+
+  background: transparent;
+  border: var(--border-structural) solid var(--nova-border);
+  clip-path: polygon(
+    0 0, calc(100% - var(--chamfer-sm)) 0, 100% var(--chamfer-sm),
+    100% 100%, var(--chamfer-sm) 100%, 0 calc(100% - var(--chamfer-sm))
+  );
+
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-wide);
+  color: var(--nova-text-secondary);
+  text-transform: uppercase;
+  cursor: pointer;
+
+  box-shadow: 0 2px 0 0 #0a1420;
+  transition:
+    transform var(--t-press) var(--ease-mechanical),
+    box-shadow var(--t-press) var(--ease-mechanical),
+    background-color var(--t-hover) var(--ease-snap),
+    color var(--t-hover) var(--ease-snap),
+    border-color var(--t-hover) var(--ease-snap);
+}
+
+.nova-btn:hover {
+  border-color: var(--nova-cyan-line);
+  color: var(--nova-cyan-bright);
+  background: var(--nova-cyan-dim);
+  box-shadow: inset 0 0 8px var(--nova-cyan-dim);
+}
+
+.nova-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 5px rgba(8, 17, 27, 0.8);
+}
+
+.nova-btn--primary {
+  background: var(--nova-cyan);
+  border-color: var(--nova-cyan-bright);
+  color: var(--nova-space);
+  font-weight: 600;
+}
+
+.nova-btn--primary:hover {
+  background: var(--nova-cyan-bright);
+  color: var(--nova-space);
+}
+
+.nova-btn__glyph {
+  font-size: 1em;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   STATUS CHIP — hard rectangle, no soft pills
+   -------------------------------------------------------------------------- */
+
+.nova-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border: var(--border-thin) solid currentColor;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.nova-chip--live           { color: var(--nova-cyan);        background: var(--nova-cyan-dim); }
+.nova-chip--in_dev         { color: var(--nova-orange);      background: var(--nova-orange-dim); }
+.nova-chip--standby        { color: var(--nova-ivory);       background: var(--nova-ivory-dim); }
+.nova-chip--decommissioned { color: var(--nova-text-muted);  background: transparent; }
+.nova-chip--critical       { color: var(--nova-danger);      background: var(--nova-danger-dim); }
+
+.nova-chip--acquiring      { color: var(--nova-orange);      background: var(--nova-orange-dim); }
+.nova-chip--active         { color: var(--nova-cyan);        background: var(--nova-cyan-dim); }
+.nova-chip--dormant        { color: var(--nova-text-muted);  background: transparent; }
+.nova-chip--core           { color: var(--nova-ivory);       background: var(--nova-ivory-dim); }
+
+/* --------------------------------------------------------------------------
+   PROGRESS BAR — segmented, industrial, no gradients
+   -------------------------------------------------------------------------- */
+
+.nova-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.nova-progress__track {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  padding: 2px;
+  background: var(--nova-space);
+  border: var(--border-thin) solid var(--nova-grid);
+  min-width: 60px;
+}
+
+.nova-progress__seg {
+  flex: 1;
+  background: var(--nova-grid);
+}
+
+.nova-progress__seg--on { background: var(--nova-cyan); }
+.nova-progress--orange .nova-progress__seg--on { background: var(--nova-orange); }
+.nova-progress--ivory  .nova-progress__seg--on { background: var(--nova-ivory); }
+
+.nova-progress__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-muted);
+  min-width: 3.4em;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   DATA ROWS — dense label/value telemetry
+   -------------------------------------------------------------------------- */
+
+.nova-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.nova-data__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: var(--border-thin) dashed var(--nova-grid);
+}
+
+.nova-data__row:last-child { border-bottom: 0; }
+
+.nova-data__label {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  min-width: 40%;
+}
+
+.nova-data__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-primary);
+  margin-left: auto;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.nova-data__value--nominal  { color: var(--nova-cyan); }
+.nova-data__value--elevated { color: var(--nova-orange); }
+.nova-data__value--critical { color: var(--nova-danger); }
+
+/* Inline metadata strip: REF_ID // PLATFORM // OPERATOR */
+.nova-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-muted);
+  text-transform: uppercase;
+}
+
+.nova-meta__sep {
+  color: var(--nova-text-diagnostic);
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   TELEMETRY READOUT — header CPU / MEM / NET
+   -------------------------------------------------------------------------- */
+
+.nova-readout {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+}
+
+.nova-readout__bar {
+  display: flex;
+  gap: 1px;
+  width: 44px;
+  height: 8px;
+}
+
+.nova-readout__tick {
+  flex: 1;
+  background: var(--nova-grid);
+  transition: background-color var(--t-ambient) linear;
+}
+
+.nova-readout__tick--on { background: var(--nova-cyan); }
+
+.nova-readout__num {
+  color: var(--nova-text-muted);
+  min-width: 2.6em;
+}
+
+/* --------------------------------------------------------------------------
+   N.O.V.A. VOICE BLOCK — her commentary, visually distinct from content
+   -------------------------------------------------------------------------- */
+
+.nova-voice {
+  position: relative;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--nova-ivory-dim);
+  border-left: var(--border-heavy) solid var(--nova-ivory);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  color: var(--nova-ivory);
+  font-style: italic;
+}
+
+.nova-voice__label {
+  display: block;
+  margin-bottom: var(--sp-1);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  font-style: normal;
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-muted);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   LOG ENTRY — Captain's Log timeline
+   -------------------------------------------------------------------------- */
+
+.nova-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.nova-log__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.nova-log__stardate {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-cyan);
+  text-transform: uppercase;
+}
+
+.nova-log__type {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-orange);
+  text-transform: uppercase;
+}
+
+.nova-log__title {
+  font-size: var(--fs-mid);
+  letter-spacing: var(--ls-wide);
+  margin-top: var(--sp-1);
+}
+
+.nova-log__body {
+  color: var(--nova-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   MISSION ROW — dense database list entry
+   -------------------------------------------------------------------------- */
+
+.nova-mission {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 200px;
+  gap: var(--sp-4);
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: var(--border-thin) solid var(--nova-grid);
+  color: inherit;
+  transition: background-color var(--t-hover) var(--ease-snap);
+}
+
+.nova-mission:last-child { border-bottom: 0; }
+
+.nova-mission:hover {
+  background: var(--nova-panel-alt);
+  color: inherit;
+}
+
+.nova-mission:hover .nova-mission__title { color: var(--nova-cyan-bright); }
+
+.nova-mission__icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nova-space);
+  border: var(--border-thin) solid var(--nova-grid);
+  overflow: hidden;
+}
+
+.nova-mission__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.nova-mission__icon-fallback {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-diagnostic);
+}
+
+.nova-mission__main { min-width: 0; }
+
+.nova-mission__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-mid);
+  font-weight: 600;
+  letter-spacing: var(--ls-wide);
+  color: var(--nova-text-primary);
+  text-transform: uppercase;
+  transition: color var(--t-hover) var(--ease-snap);
+}
+
+.nova-mission__summary {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-small);
+  color: var(--nova-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nova-mission__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: flex-end;
+}
+
+/* --------------------------------------------------------------------------
+   MISSION DOSSIER — the individual mission page header
+   -------------------------------------------------------------------------- */
+
+.nova-dossier__hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 190px;
+  padding: var(--sp-8);
+  background: var(--nova-space);
+  border-bottom: var(--border-structural) solid var(--nova-border);
+  background-image:
+    linear-gradient(var(--nova-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--nova-grid) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.nova-dossier__logo {
+  max-height: 120px;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+.nova-dossier__hero-fallback {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.nova-dossier__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  font-size: var(--fs-xl);
+  letter-spacing: var(--ls-wide);
+  margin-bottom: var(--sp-2);
+}
+
+.nova-dossier__body {
+  margin-top: var(--sp-4);
+  padding-left: var(--sp-4);
+  border-left: var(--border-structural) solid var(--nova-cyan-line);
+  color: var(--nova-text-secondary);
+}
+
+.nova-dossier__actions {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-top: var(--sp-5);
+}
+
+/* --------------------------------------------------------------------------
+   SIGNAL CARD — Observatory entries
+   -------------------------------------------------------------------------- */
+
+.nova-signal__strength {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0;
+}
+
+.nova-signal__origin {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   TAG LIST
+   -------------------------------------------------------------------------- */
+
+.nova-tags {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.nova-tag {
+  padding: 1px var(--sp-2);
+  background: var(--nova-space);
+  border: var(--border-thin) solid var(--nova-grid);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   OBJECTIVE LIST — checklist inside panels
+   -------------------------------------------------------------------------- */
+
+.nova-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+.nova-objectives li {
+  display: flex;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  color: var(--nova-text-secondary);
+  letter-spacing: var(--ls-data);
+}
+
+.nova-objectives li::before {
+  content: "▸";
+  color: var(--nova-cyan);
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   SYSTEM LOG FEED — ambient scrolling terminal output
+   -------------------------------------------------------------------------- */
+
+.nova-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-2) var(--sp-3);
+  max-height: 96px;
+  overflow: hidden;
+  background: var(--nova-space);
+  border-top: var(--border-thin) solid var(--nova-grid);
+}
+
+.nova-feed__line {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-diagnostic);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nova-feed__tag { color: var(--nova-cyan); }
+.nova-feed__tag--net { color: var(--nova-ivory); }
+.nova-feed__tag--sec { color: var(--nova-orange); }
+.nova-feed__tag--nova { color: var(--nova-cyan-bright); }
+
+/* --------------------------------------------------------------------------
+   STAMP — declassified section marker
+   -------------------------------------------------------------------------- */
+
+.nova-stamp {
+  display: inline-block;
+  padding: var(--sp-1) var(--sp-3);
+  border: var(--border-structural) solid var(--nova-ivory);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-ivory);
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+}
+
+/* --------------------------------------------------------------------------
+   PROSE — readable long-form blocks inside panels
+   -------------------------------------------------------------------------- */
+
+.nova-prose p {
+  max-width: 76ch;
+  margin-bottom: var(--sp-3);
+  color: var(--nova-text-secondary);
+}
+
+.nova-prose h3 {
+  margin: var(--sp-5) 0 var(--sp-2);
+  font-size: var(--fs-mid);
+  color: var(--nova-text-primary);
+}
+
+.nova-prose h3:first-child { margin-top: 0; }
+
+/* --------------------------------------------------------------------------
+   EMPTY STATE
+   -------------------------------------------------------------------------- */
+
+.nova-empty {
+  padding: var(--sp-8) var(--sp-4);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-diagnostic);
+  text-transform: uppercase;
+}

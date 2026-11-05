@@ -1,0 +1,432 @@
+/* ==========================================================================
+   AG NOVA SLATE HUB — 08 EXTENSIONS
+   Components that exist only in Slate Hub: form controls, toggle switch,
+   slot schematic, e-reader preview bezel, landing cards.
+
+   Rules for this file:
+   - Built exclusively from variables in 01-tokens.css. No hex values.
+   - Never overrides a framework class. New classes use the .hub- prefix.
+   - Files 01 to 06 are vendored copies of the AG Nova framework. Do not edit them.
+   ========================================================================== */
+
+/* The framework panel sets display:flex, which would beat the UA [hidden] rule */
+[hidden] { display: none !important; }
+
+/* --------------------------------------------------------------------------
+   TYPOGRAPHY HELPERS
+   -------------------------------------------------------------------------- */
+.hub-label {
+  display: block;
+  margin-bottom: var(--sp-1);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-muted);
+  text-transform: uppercase;
+}
+
+.hub-note {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--nova-text-muted);
+}
+
+.hub-note--data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-data);
+}
+
+.hub-dim { color: var(--nova-text-muted); }
+
+/* --------------------------------------------------------------------------
+   FORM CONTROLS — recessed hardware slots, hard corners, no soft pills
+   -------------------------------------------------------------------------- */
+.hub-field {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.hub-input,
+.hub-select,
+.hub-textarea {
+  display: block;
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--nova-space);
+  border: var(--border-thin) dashed var(--nova-border);
+  border-radius: 0;
+  box-shadow: inset 0 2px 6px var(--nova-recess);
+  color: var(--nova-text-primary);
+  color-scheme: dark;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-base);
+  letter-spacing: var(--ls-data);
+  outline: none;
+  transition:
+    border-color var(--t-hover) var(--ease-snap),
+    background-color var(--t-hover) var(--ease-snap);
+}
+
+.hub-input::placeholder,
+.hub-textarea::placeholder {
+  color: var(--nova-text-diagnostic);
+}
+
+.hub-input:hover,
+.hub-select:hover,
+.hub-textarea:hover {
+  border-color: var(--nova-cyan-line);
+}
+
+.hub-input:focus,
+.hub-select:focus,
+.hub-textarea:focus {
+  border-style: solid;
+  border-color: var(--nova-cyan);
+  background: var(--nova-chassis);
+}
+
+.hub-input:disabled,
+.hub-select:disabled,
+.hub-textarea:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hub-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.hub-row {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-end;
+  margin-bottom: var(--sp-3);
+}
+
+.hub-row:last-child { margin-bottom: 0; }
+
+.hub-actions {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Button states the framework does not define */
+.nova-btn:disabled,
+.nova-btn[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.hub-btn--block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Orange = a deviation the captain is currently causing (flip engaged) */
+.hub-btn--warn {
+  background: var(--nova-orange-dim);
+  border-color: var(--nova-orange-line);
+  color: var(--nova-orange);
+}
+
+.hub-btn--warn:hover {
+  background: var(--nova-orange-dim);
+  border-color: var(--nova-orange);
+  color: var(--nova-orange);
+  box-shadow: inset 0 0 8px var(--nova-orange-dim);
+}
+
+/* --------------------------------------------------------------------------
+   TOGGLE — a two-position hardware switch
+   -------------------------------------------------------------------------- */
+.hub-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--nova-text-muted);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--t-hover) var(--ease-snap);
+}
+
+.hub-toggle:hover { color: var(--nova-text-primary); }
+.hub-toggle.is-on { color: var(--nova-text-primary); }
+
+.hub-toggle__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 22px;
+  background: var(--nova-space);
+  border: var(--border-structural) solid var(--nova-border);
+  box-shadow: inset 0 2px 4px var(--nova-recess);
+  transition: border-color var(--t-hover) var(--ease-snap);
+}
+
+.hub-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--nova-text-muted);
+  transition:
+    left var(--t-press) var(--ease-hardware),
+    background-color var(--t-hover) var(--ease-snap);
+}
+
+.hub-toggle.is-on .hub-toggle__track { border-color: var(--nova-cyan-line); }
+
+.hub-toggle.is-on .hub-toggle__knob {
+  left: 26px;
+  background: var(--nova-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   SLOT SCHEMATIC — admin layout editor
+   Raised blocks use --nova-panel-alt, live slots carry the cyan operational tint.
+   -------------------------------------------------------------------------- */
+.hub-schematic {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.hub-srow {
+  padding: var(--sp-3);
+  background: var(--nova-panel-alt);
+  border: var(--border-thin) solid var(--nova-border);
+}
+
+.hub-srow.is-empty {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--nova-grid);
+}
+
+.hub-srow__head {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-2);
+}
+
+.hub-srow__head > .hub-label {
+  margin: 0;
+  padding-bottom: var(--sp-2);
+  color: var(--nova-text-secondary);
+}
+
+.hub-srow__head .hub-field { flex: 0 0 auto; }
+.hub-srow__head .hub-input { width: 96px; }
+.hub-srow__head .hub-select { width: 140px; }
+
+.hub-pct {
+  margin-left: auto;
+  margin-bottom: var(--sp-2);
+}
+
+.hub-cells {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.hub-slot {
+  min-width: 0;
+  padding: var(--sp-3);
+  background: var(--nova-cyan-dim);
+  border: var(--border-thin) solid var(--nova-cyan-line);
+}
+
+.hub-slot.is-empty {
+  background: none;
+  border: var(--border-thin) dashed var(--nova-grid);
+}
+
+.hub-slot.is-expand { grid-column: 1 / -1; }
+
+.hub-slot .nova-chip { margin-top: var(--sp-2); }
+
+/* --------------------------------------------------------------------------
+   GEOCODING RESULTS
+   -------------------------------------------------------------------------- */
+.hub-geo {
+  margin: 0 0 var(--sp-3);
+  background: var(--nova-space);
+  border: var(--border-thin) dashed var(--nova-grid);
+}
+
+.hub-geo li + li { border-top: var(--border-thin) dashed var(--nova-grid); }
+
+.hub-geo button {
+  display: block;
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  background: none;
+  border: 0;
+  color: var(--nova-text-secondary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-data);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--t-hover) var(--ease-snap),
+    color var(--t-hover) var(--ease-snap);
+}
+
+.hub-geo button:hover {
+  background: var(--nova-panel-alt);
+  color: var(--nova-cyan-bright);
+}
+
+/* --------------------------------------------------------------------------
+   E-READER PREVIEW — the bezel is chassis, the glass stays e-ink white
+   -------------------------------------------------------------------------- */
+.hub-preview-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.hub-preview {
+  width: 100%;
+  max-width: 390px;
+  aspect-ratio: 3 / 4;
+  background: var(--nova-space);
+  border: 8px solid var(--nova-chassis);
+  outline: var(--border-structural) solid var(--nova-border);
+  box-shadow: 0 12px 32px var(--nova-recess);
+}
+
+.hub-preview.is-landscape {
+  max-width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.hub-preview iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: grayscale(1);
+}
+
+.hub-link {
+  margin-bottom: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--nova-space);
+  border: var(--border-thin) dashed var(--nova-grid);
+  color: var(--nova-cyan);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-data);
+  word-break: break-all;
+}
+
+/* --------------------------------------------------------------------------
+   PAGE LAYOUTS
+   -------------------------------------------------------------------------- */
+.hub-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--panel-gap);
+}
+
+.nova-panel.hub-sticky {
+  position: sticky;
+  top: var(--sp-4);
+}
+
+/* --------------------------------------------------------------------------
+   LOGIN
+   -------------------------------------------------------------------------- */
+.hub-login {
+  max-width: 440px;
+  margin: var(--sp-8) auto 0;
+}
+
+.hub-pin {
+  margin: var(--sp-3) 0;
+  font-size: var(--fs-large);
+  letter-spacing: 0.4em;
+  text-align: center;
+}
+
+/* DANGER = genuine failure only: wrong PIN, lockout, save error */
+.hub-msg {
+  min-height: 1.2em;
+  margin-top: var(--sp-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  letter-spacing: var(--ls-wide);
+  color: var(--nova-danger);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   LANDING
+   -------------------------------------------------------------------------- */
+.hub-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--panel-gap);
+}
+
+.hub-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  height: 100%;
+}
+
+.hub-card__push { margin-top: auto; }
+
+.hub-card .nova-prose p {
+  font-size: var(--fs-small);
+  color: var(--nova-text-muted);
+}
+
+.hub-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .hub-layout { grid-template-columns: minmax(0, 1fr); }
+  .nova-panel.hub-sticky { position: relative; top: auto; }
+}
+
+@media (max-width: 768px) {
+  .hub-row { flex-wrap: wrap; }
+  .hub-row > .hub-field { flex: 1 1 100%; }
+  .hub-login { margin-top: var(--sp-4); }
+  .hub-srow__head .hub-input,
+  .hub-srow__head .hub-select { width: 100%; }
+  .hub-srow__head .hub-field { flex: 1 1 100%; }
+  .hub-pct { margin-left: 0; }
+}

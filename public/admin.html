@@ -5,584 +5,210 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#08111B">
   <title>AG Nova Slate Hub // Admin</title>
   <link rel="icon" type="image/svg+xml" href="/slate-hub-logo.svg">
-  <style>
-    /* AG NOVA // N.O.V.A. OS: NASA-punk, warm technical, operational cyan, warning orange */
-    :root {
-      --bg: #101316;
-      --bg2: #161b20;
-      --panel: #1b2127;
-      --line: #3a4550;
-      --line2: #2a333c;
-      --text: #e9e3d3;
-      --dim: #8d9499;
-      --cyan: #4fd3dc;
-      --cyan-d: #2a8f96;
-      --orange: #f28c28;
-      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Consolas, monospace
-    }
 
-    * {
-      box-sizing: border-box
-    }
-
-    html,
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 14px
-    }
-
-    body {
-      background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .012) 3px 4px)
-    }
-
-    [hidden] {
-      display: none !important
-    }
-
-    .dim {
-      color: var(--dim)
-    }
-
-    .small {
-      font-size: 12px;
-      margin-top: 8px
-    }
-
-    .panel {
-      position: relative;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      padding: 38px 16px 16px;
-      margin-bottom: 16px;
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%)
-    }
-
-    .panel-tag {
-      position: absolute;
-      top: 0;
-      left: 0;
-      background: var(--line2);
-      color: var(--cyan);
-      font-size: 11px;
-      letter-spacing: .15em;
-      padding: 5px 12px;
-      border-right: 1px solid var(--line);
-      border-bottom: 1px solid var(--line)
-    }
-
-    .led {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--cyan);
-      margin-right: 8px;
-      box-shadow: 0 0 6px var(--cyan);
-      animation: pulse 2.4s ease-in-out infinite;
-      vertical-align: middle
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .35;
-        box-shadow: 0 0 1px var(--cyan)
-      }
-    }
-
-    .btn {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .12em;
-      color: var(--text);
-      background: #262e36;
-      border: 1px solid var(--line);
-      padding: 9px 16px;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #0b0e10;
-      transition: transform .05s, box-shadow .05s
-    }
-
-    .btn:active:not(:disabled) {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #0b0e10
-    }
-
-    .btn:disabled {
-      opacity: .4;
-      cursor: default
-    }
-
-    .btn.primary {
-      background: var(--cyan-d);
-      border-color: var(--cyan);
-      color: #06181a;
-      font-weight: 700
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--text);
-      background: var(--bg2);
-      border: 1px dashed var(--line);
-      padding: 9px 10px;
-      outline: none
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border: 1px solid var(--cyan)
-    }
-
-    textarea {
-      resize: vertical;
-      line-height: 1.5
-    }
-
-    .field {
-      display: block;
-      flex: 1
-    }
-
-    .field>span {
-      display: block;
-      font-size: 10px;
-      letter-spacing: .15em;
-      color: var(--dim);
-      margin-bottom: 6px
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      margin-bottom: 12px
-    }
-
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: none;
-      border: 0;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .12em;
-      cursor: pointer;
-      padding: 0
-    }
-
-    .toggle-track {
-      width: 44px;
-      height: 22px;
-      background: #0b0e10;
-      border: 1px solid var(--line);
-      position: relative
-    }
-
-    .toggle-knob {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 16px;
-      height: 16px;
-      background: var(--dim);
-      transition: left .12s cubic-bezier(.3, 1.6, .6, 1), background .12s
-    }
-
-    .toggle.on .toggle-knob {
-      left: 24px;
-      background: var(--cyan)
-    }
-
-    .login {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px
-    }
-
-    .login-box {
-      width: 360px
-    }
-
-    .login-head {
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      letter-spacing: .12em;
-      margin-bottom: 10px
-    }
-
-    .pin {
-      font-size: 22px;
-      letter-spacing: .4em;
-      text-align: center;
-      margin: 14px 0
-    }
-
-    .login-box .btn {
-      width: 100%
-    }
-
-    .msg {
-      margin-top: 14px;
-      font-size: 12px;
-      letter-spacing: .1em;
-      color: var(--orange)
-    }
-
-    .admin {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 16px
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      font-size: 12px;
-      letter-spacing: .14em;
-      border-bottom: 2px solid var(--line);
-      padding-bottom: 12px;
-      margin-bottom: 18px
-    }
-
-    .topbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 0
-    }
-
-    .nav-logo {
-      width: 44px;
-      height: 44px;
-      display: block;
-      flex-shrink: 0;
-      margin-right: 10px
-    }
-
-    .login-logo {
-      width: 32px;
-      height: 32px;
-      display: block;
-      flex-shrink: 0;
-      margin-right: 10px
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center
-    }
-
-    .status {
-      color: var(--cyan);
-      font-size: 11px
-    }
-
-    .status.warn {
-      color: var(--orange)
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      gap: 16px
-    }
-
-    @media (max-width:900px) {
-      .layout {
-        grid-template-columns: 1fr
-      }
-    }
-
-    .sticky {
-      position: sticky;
-      top: 16px
-    }
-
-    .orient-bar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 14px
-    }
-
-    .mode-btn.on {
-      background: var(--cyan-d);
-      border-color: var(--cyan);
-      color: #06181a;
-      font-weight: 700
-    }
-
-    .flip-btn.on {
-      border-color: var(--orange);
-      color: var(--orange)
-    }
-
-    .schematic {
-      display: flex;
-      flex-direction: column;
-      gap: 8px
-    }
-
-    .srow {
-      border: 1px solid var(--line);
-      padding: 10px;
-      background: rgba(255, 255, 255, .015)
-    }
-
-    .srow.empty {
-      border-style: dashed;
-      opacity: .6
-    }
-
-    .srow-head {
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-      margin-bottom: 8px
-    }
-
-    .srow-head .field {
-      flex: 0 0 auto
-    }
-
-    .srow-head input {
-      width: 90px
-    }
-
-    .srow-head select {
-      width: 130px
-    }
-
-    .pct {
-      font-size: 11px;
-      letter-spacing: .12em;
-      color: var(--cyan);
-      margin-left: auto;
-      padding-bottom: 10px;
-      white-space: nowrap
-    }
-
-    .cells {
-      display: grid;
-      gap: 8px
-    }
-
-    .slot {
-      border: 1px solid var(--cyan-d);
-      padding: 10px;
-      background: rgba(79, 211, 220, .04);
-      min-width: 0
-    }
-
-    .slot.empty {
-      border: 1px dashed var(--line);
-      background: none
-    }
-
-    .slot.expand {
-      grid-column: 1/-1
-    }
-
-    .slot-note {
-      display: block;
-      font-size: 10px;
-      letter-spacing: .12em;
-      color: var(--orange);
-      margin-top: 6px
-    }
-
-    .slot-name {
-      display: block;
-      font-size: 10px;
-      letter-spacing: .2em;
-      color: var(--dim);
-      margin-bottom: 6px
-    }
-
-    .geo {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 12px;
-      border: 1px dashed var(--line)
-    }
-
-    .geo button {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: 0;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 8px 10px;
-      cursor: pointer
-    }
-
-    .geo button:hover {
-      background: var(--bg2);
-      color: var(--cyan)
-    }
-
-    .preview-wrap {
-      display: flex;
-      justify-content: center
-    }
-
-    .preview {
-      width: 100%;
-      aspect-ratio: 3/4;
-      max-width: 390px;
-      background: #fff;
-      border: 8px solid #2b3036;
-      border-radius: 4px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, .6)
-    }
-
-    .preview.landscape {
-      aspect-ratio: 4/3;
-      max-width: 100%
-    }
-
-    .preview iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-      filter: grayscale(1)
-    }
-
-    .link {
-      font-size: 12px;
-      word-break: break-all;
-      background: var(--bg2);
-      border: 1px dashed var(--line);
-      padding: 10px;
-      margin-bottom: 12px;
-      color: var(--cyan)
-    }
-  </style>
+  <link rel="stylesheet" href="/css/00-fonts.css">
+  <link rel="stylesheet" href="/css/01-tokens.css">
+  <link rel="stylesheet" href="/css/02-base.css">
+  <link rel="stylesheet" href="/css/03-layout.css">
+  <link rel="stylesheet" href="/css/04-components.css">
+  <link rel="stylesheet" href="/css/05-animations.css">
+  <link rel="stylesheet" href="/css/06-responsive.css">
+  <link rel="stylesheet" href="/css/08-slatehub.css">
+  <noscript><style>.nova-panel,.nova-page-head__title,.nova-page-head__desc,.nova-page-head__meta{animation:none}</style></noscript>
+  <script src="/js/nova-shell.js" defer></script>
 </head>
 
 <body>
+  <a class="nova-skip-link" href="#main">Skip to content</a>
 
-  <!-- LOGIN -->
-  <main class="login" id="view-login" hidden>
-    <form class="panel login-box" id="login-form">
-      <div class="panel-tag">[SEC] ACCESS CONTROL</div>
-      <div class="login-head"><img src="/slate-hub-logo.svg" alt="" class="login-logo"><span class="led"></span>AG NOVA SLATE HUB // ADMIN TERMINAL</div>
-      <p class="dim">Authentication required. Identify credentials to access the terminal core.</p>
-      <input class="pin" id="pin" type="password" autocomplete="current-password" placeholder="••••••••">
-      <button class="btn primary" id="login-btn">AUTHORIZE</button>
-      <div class="msg" id="login-msg"></div>
-    </form>
-  </main>
+  <div class="nova-shell">
 
-  <!-- EDITOR -->
-  <main class="admin" id="view-editor" hidden>
-    <header class="topbar">
-      <div class="topbar-brand"><img src="/slate-hub-logo.svg" alt="" class="nav-logo"><span class="led"></span>AG NOVA SLATE HUB // TERMINAL CONFIG</div>
-      <div class="topbar-actions">
-        <span class="status" id="status">CONFIG LOADED</span>
-        <button class="btn primary" id="save" disabled>COMMIT CONFIG</button>
-        <button class="btn" id="logout">LOGOUT</button>
+    <header class="nova-header">
+      <div class="nova-header__brand">
+        <img class="nova-header__mark" src="/slate-hub-logo.svg" alt="">
+        <div class="nova-header__titles">
+          <span class="nova-header__os">AG NOVA SLATE HUB</span>
+          <span class="nova-header__sub">N.O.V.A. OS // TERMINAL CONFIG</span>
+        </div>
+      </div>
+      <span class="nova-header__divider"></span>
+      <div class="nova-header__telemetry">
+        <span class="nova-readout">STARDATE <span data-stardate>--.---</span></span>
+        <div class="hub-actions" id="header-actions" hidden>
+          <span class="nova-chip nova-chip--live" id="status">CONFIG LOADED</span>
+          <button class="nova-btn nova-btn--primary" id="save" disabled>COMMIT CONFIG</button>
+          <button class="nova-btn" id="logout">LOGOUT</button>
+        </div>
       </div>
     </header>
 
-    <div class="layout">
-      <div>
-        <section class="panel">
-          <div class="panel-tag" id="schematic-tag">[01] SLOT LAYOUT // PORTRAIT</div>
-          <div class="orient-bar">
-            <button type="button" class="btn mode-btn" data-orient="portrait">PORTRAIT</button>
-            <button type="button" class="btn mode-btn" data-orient="landscape">LANDSCAPE</button>
-            <button type="button" class="btn flip-btn" id="flip">&#x27F2; FLIP SCREEN (180&deg;) // <span
-                id="flip-state">NORMAL</span></button>
-          </div>
-          <div class="dim small" id="rotation-info" style="margin:0 0 12px"></div>
-          <div class="schematic" id="schematic"></div>
-        </section>
+    <main class="nova-viewport" id="main">
 
-        <section class="panel">
-          <div class="panel-tag">[02] TERMINAL</div>
-          <div class="row">
-            <label class="field"><span>TERMINAL ID</span><input data-path="terminalId" maxlength="16"></label>
-            <label class="field"><span>TIMEZONE</span><input data-path="timezone"></label>
+      <!-- LOGIN -->
+      <div id="view-login" hidden>
+        <div class="nova-page-head">
+          <div>
+            <h1 class="nova-page-head__title">Access Control</h1>
+            <p class="nova-page-head__desc">Authentication required. Identify credentials to access the terminal core.</p>
           </div>
-          <div class="row">
-            <label class="field"><span>PAGE REFRESH (MIN)</span><input data-path="refreshMinutes" data-type="number"
-                type="number" min="5" max="120"></label>
-          </div>
-        </section>
+          <div class="nova-page-head__meta">OPERATOR CONSOLE // LOCKED</div>
+        </div>
 
-        <section class="panel" data-module="clock">
-          <div class="panel-tag">[CHR] CHRONOMETER</div>
-          <div class="row">
-            <button type="button" class="toggle" data-path="clock.hour24"><span class="toggle-track"><span
-                  class="toggle-knob"></span></span>24-HOUR FORMAT</button>
-            <button type="button" class="toggle" data-path="clock.showDate"><span class="toggle-track"><span
-                  class="toggle-knob"></span></span>SHOW DATE</button>
+        <form class="nova-panel hub-login" id="login-form" style="--panel-index:0">
+          <div class="nova-panel__head">
+            <span class="nova-panel__code">[SEC] ACCESS CONTROL</span>
+            <span class="nova-panel__state">PIN REQUIRED</span>
           </div>
-        </section>
-
-        <section class="panel" data-module="weather">
-          <div class="panel-tag">[ATM] ATMOS / WEATHER</div>
-          <form class="row" id="geo-form">
-            <label class="field"><span>SEARCH LOCATION</span><input id="geo-q" placeholder="e.g. London"></label>
-            <button class="btn">SCAN</button>
-          </form>
-          <ul class="geo" id="geo-results" hidden></ul>
-          <div class="row">
-            <label class="field"><span>LABEL</span><input data-path="weather.label" maxlength="40"></label>
-            <label class="field"><span>FORECAST (3H BLOCKS)</span><input data-path="weather.hours" data-type="number"
-                type="number" min="0" max="6"></label>
+          <div class="nova-panel__body">
+            <label class="hub-field">
+              <span class="hub-label">OPERATOR PIN</span>
+              <input class="hub-input hub-pin" id="pin" type="password" autocomplete="current-password" placeholder="••••••••">
+            </label>
+            <button class="nova-btn nova-btn--primary hub-btn--block" id="login-btn">AUTHORIZE</button>
+            <div class="hub-msg" id="login-msg" role="alert"></div>
           </div>
-          <div class="dim small" id="coords"></div>
-        </section>
-
-        <section class="panel" data-module="report">
-          <div class="panel-tag">[NVA] N.O.V.A. REPORT</div>
-          <label class="field"><span>ONE ENTRY PER LINE // RANDOMLY DISPLAYED ON REFRESH</span>
-            <textarea rows="6" id="report-lines"></textarea></label>
-        </section>
+          <div class="nova-panel__foot">
+            <span>MAX 5 ATTEMPTS // 15 MIN WINDOW</span>
+          </div>
+        </form>
       </div>
 
-      <div>
-        <section class="panel sticky">
-          <div class="panel-tag" id="preview-tag">[PRV] KINDLE PREVIEW // PORTRAIT</div>
-          <div class="preview-wrap">
-            <div class="preview" id="preview-box"><iframe id="preview" title="Preview" sandbox="allow-scripts"></iframe>
-            </div>
+      <!-- EDITOR -->
+      <div id="view-editor" hidden>
+        <div class="nova-page-head">
+          <div>
+            <h1 class="nova-page-head__title">Terminal Config</h1>
+            <p class="nova-page-head__desc">Configure layout, weather and report lines for the Kindle display. The Kindle shows committed configurations only.</p>
           </div>
-          <div class="dim small">Draft preview. The Kindle terminal displays committed configurations only.</div>
-        </section>
-        <section class="panel">
-          <div class="panel-tag">[LNK] TERMINAL LINK</div>
-          <div class="link" id="kindle-url"></div>
-          <button class="btn" id="copy">COPY</button>
-        </section>
+          <div class="nova-page-head__meta">N.O.V.A. OS // KT CONFIG</div>
+        </div>
+
+        <div class="hub-layout">
+          <div class="nova-stack">
+
+            <section class="nova-panel" style="--panel-index:0">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[01] SLOT LAYOUT</span>
+                <span class="nova-panel__state" id="schematic-state">PORTRAIT 3 ROWS</span>
+              </div>
+              <div class="nova-panel__body">
+                <div class="hub-actions" style="margin-bottom: var(--sp-3)">
+                  <button type="button" class="nova-btn mode-btn" data-orient="portrait">PORTRAIT</button>
+                  <button type="button" class="nova-btn mode-btn" data-orient="landscape">LANDSCAPE</button>
+                  <button type="button" class="nova-btn" id="flip">&#x27F2; FLIP SCREEN (180&deg;) // <span id="flip-state">NORMAL</span></button>
+                </div>
+                <div class="hub-note hub-note--data" id="rotation-info" style="margin: 0 0 var(--sp-3)"></div>
+                <div class="hub-schematic" id="schematic"></div>
+              </div>
+            </section>
+
+            <section class="nova-panel" style="--panel-index:1">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[02] TERMINAL</span>
+                <span class="nova-panel__state">SYSTEM</span>
+              </div>
+              <div class="nova-panel__body">
+                <div class="hub-row">
+                  <label class="hub-field"><span class="hub-label">TERMINAL ID</span><input class="hub-input" data-path="terminalId" maxlength="16"></label>
+                  <label class="hub-field"><span class="hub-label">TIMEZONE</span><input class="hub-input" data-path="timezone"></label>
+                </div>
+                <div class="hub-row">
+                  <label class="hub-field"><span class="hub-label">PAGE REFRESH (MIN)</span><input class="hub-input" data-path="refreshMinutes" data-type="number" type="number" min="5" max="120"></label>
+                </div>
+              </div>
+            </section>
+
+            <section class="nova-panel" data-module="clock" style="--panel-index:2">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[CHR] CHRONOMETER</span>
+                <span class="nova-panel__state">MODULE</span>
+              </div>
+              <div class="nova-panel__body">
+                <div class="hub-row">
+                  <button type="button" class="hub-toggle" data-path="clock.hour24"><span class="hub-toggle__track"><span class="hub-toggle__knob"></span></span>24-HOUR FORMAT</button>
+                  <button type="button" class="hub-toggle" data-path="clock.showDate"><span class="hub-toggle__track"><span class="hub-toggle__knob"></span></span>SHOW DATE</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="nova-panel" data-module="weather" style="--panel-index:3">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[ATM] ATMOS / WEATHER</span>
+                <span class="nova-panel__state">MODULE</span>
+              </div>
+              <div class="nova-panel__body">
+                <form class="hub-row" id="geo-form">
+                  <label class="hub-field"><span class="hub-label">SEARCH LOCATION</span><input class="hub-input" id="geo-q" placeholder="e.g. London"></label>
+                  <button class="nova-btn">SCAN</button>
+                </form>
+                <ul class="hub-geo" id="geo-results" hidden></ul>
+                <div class="hub-row">
+                  <label class="hub-field"><span class="hub-label">LABEL</span><input class="hub-input" data-path="weather.label" maxlength="40"></label>
+                  <label class="hub-field"><span class="hub-label">FORECAST (3H BLOCKS)</span><input class="hub-input" data-path="weather.hours" data-type="number" type="number" min="0" max="6"></label>
+                </div>
+                <div class="hub-note hub-note--data" id="coords"></div>
+              </div>
+            </section>
+
+            <section class="nova-panel nova-panel--ivory" data-module="report" style="--panel-index:4">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[NVA] N.O.V.A. REPORT</span>
+                <span class="nova-panel__state">MODULE</span>
+              </div>
+              <div class="nova-panel__body">
+                <label class="hub-field"><span class="hub-label">ONE ENTRY PER LINE // RANDOMLY DISPLAYED ON REFRESH</span>
+                  <textarea class="hub-textarea" rows="6" id="report-lines"></textarea></label>
+              </div>
+            </section>
+          </div>
+
+          <div class="nova-stack">
+            <section class="nova-panel nova-panel--cyan hub-sticky" style="--panel-index:1">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[PRV] KINDLE PREVIEW</span>
+                <span class="nova-panel__state" id="preview-state">PORTRAIT</span>
+              </div>
+              <div class="nova-panel__body">
+                <div class="hub-preview-wrap">
+                  <div class="hub-preview" id="preview-box"><iframe id="preview" title="Preview" sandbox="allow-scripts"></iframe></div>
+                </div>
+                <div class="hub-note">Draft preview. The Kindle terminal displays committed configurations only.</div>
+              </div>
+            </section>
+
+            <section class="nova-panel nova-panel--cyan" style="--panel-index:2">
+              <div class="nova-panel__head">
+                <span class="nova-panel__code">[LNK] TERMINAL LINK</span>
+                <span class="nova-panel__state">TOKEN PROTECTED</span>
+              </div>
+              <div class="nova-panel__body">
+                <div class="hub-link" id="kindle-url"></div>
+                <button class="nova-btn" id="copy">COPY</button>
+              </div>
+            </section>
+          </div>
+        </div>
       </div>
+
+    </main>
+  </div>
+
+  <nav class="nova-taskbar" aria-label="Primary">
+    <div class="nova-taskbar__inner">
+      <div class="nova-taskbar__keys">
+        <a class="nova-key" href="/"><span class="nova-key__long">HUB</span><span class="nova-key__short">HUB</span></a>
+        <a class="nova-key" href="/admin" aria-current="page"><span class="nova-key__long">ADMIN CONSOLE</span><span class="nova-key__short">ADMIN</span></a>
+      </div>
+      <div class="nova-taskbar__status"><span class="nova-pulse"></span>LINK ACTIVE</div>
     </div>
-  </main>
+  </nav>
 
   <script>
+
     (() => {
       const $ = (s) => document.querySelector(s);
       const $$ = (s) => [...document.querySelectorAll(s)];
@@ -602,7 +228,10 @@
         keys.reduce((o, k) => o[k], cfg)[last] = value;
         changed();
       };
-      const setStatus = (text, warn) => { const s = $('#status'); s.textContent = text; s.classList.toggle('warn', !!warn); };
+      const setStatus = (text, kind) => {
+        const s = $('#status'); s.textContent = text;
+        s.className = 'nova-chip nova-chip--' + (kind === 'danger' ? 'critical' : kind === 'warn' ? 'in_dev' : 'live');
+      };
 
       async function api(url, opts = {}) {
         const res = await fetch(url, { ...opts, headers: { 'content-type': 'application/json' }, credentials: 'same-origin' });
@@ -612,7 +241,7 @@
 
       // ---------- LOGIN ----------
       function showLogin() {
-        $('#view-editor').hidden = true; $('#view-login').hidden = false; $('#pin').focus();
+        $('#view-editor').hidden = true; $('#header-actions').hidden = true; $('#view-login').hidden = false; $('#pin').focus();
       }
       $('#login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -641,7 +270,7 @@
       }
 
       function moduleSelect(value, onChange) {
-        const sel = el('select');
+        const sel = el('select', 'hub-select');
         for (const [m, ml] of Object.entries(MODULES)) sel.add(new Option(ml, m));
         sel.value = value;
         sel.addEventListener('change', () => onChange(sel.value));
@@ -649,8 +278,8 @@
       }
 
       function heightInput(row) {
-        const f = el('label', 'field'); f.append(el('span', '', 'HEIGHT WEIGHT'));
-        const inp = el('input'); inp.type = 'number'; inp.min = '0.5'; inp.max = '6'; inp.step = '0.5'; inp.value = row.height;
+        const f = el('label', 'hub-field'); f.append(el('span', 'hub-label', 'HEIGHT WEIGHT'));
+        const inp = el('input', 'hub-input'); inp.type = 'number'; inp.min = '0.5'; inp.max = '6'; inp.step = '0.5'; inp.value = row.height;
         inp.addEventListener('change', () => {
           const v = Math.min(6, Math.max(0.5, Math.round(Number(inp.value) * 2) / 2 || 1));
           row.height = v; inp.value = v; changed(true);
@@ -664,22 +293,27 @@
         return rows.map((r) => (isEmpty(r) || !total ? 0 : Math.round((r.height / total) * 100)));
       }
 
+      // COLLAPSED rows are dormant; live rows report their share of the height
+      const pctBadge = (collapsed, pct) =>
+        el('span', 'nova-chip hub-pct ' + (collapsed ? 'nova-chip--dormant' : 'nova-chip--live'),
+          collapsed ? 'COLLAPSED' : pct + '% HEIGHT');
+
       // The schematic is rebuilt on every structural change (it is tiny, no diffing needed)
       function buildSchematic() {
         const box = $('#schematic'); box.textContent = '';
         if (!cfg) return;
         const land = isLand();
-        $('#schematic-tag').textContent = '[01] SLOT LAYOUT // ' + (land ? 'LANDSCAPE 3x2' : 'PORTRAIT 3 ROWS');
+        $('#schematic-state').textContent = land ? 'LANDSCAPE 3x2' : 'PORTRAIT 3 ROWS';
 
         if (!land) {
           const rows = cfg.layout.portrait.rows;
           const pct = rowPercents(rows, (r) => r.module === 'none');
           rows.forEach((row, i) => {
-            const wrap = el('div', 'srow' + (row.module === 'none' ? ' empty' : ''));
-            const head = el('div', 'srow-head');
-            head.append(el('span', 'slot-name', ROW_LABELS[i]), heightInput(row),
-              el('span', 'pct', row.module === 'none' ? 'COLLAPSED' : pct[i] + '% HEIGHT'));
-            const slot = el('div', 'slot' + (row.module === 'none' ? ' empty' : ''));
+            const wrap = el('div', 'hub-srow' + (row.module === 'none' ? ' is-empty' : ''));
+            const head = el('div', 'hub-srow__head');
+            head.append(el('span', 'hub-label', ROW_LABELS[i]), heightInput(row),
+              pctBadge(row.module === 'none', pct[i]));
+            const slot = el('div', 'hub-slot' + (row.module === 'none' ? ' is-empty' : ''));
             slot.append(moduleSelect(row.module, (v) => { row.module = v; changed(true); }));
             wrap.append(head, slot); box.append(wrap);
           });
@@ -691,11 +325,11 @@
         rows.forEach((row, i) => {
           const emptyRow = row.cols[0] === 'none' && row.cols[1] === 'none';
           const single = !emptyRow && (row.cols[0] === 'none' || row.cols[1] === 'none');
-          const wrap = el('div', 'srow' + (emptyRow ? ' empty' : ''));
-          const head = el('div', 'srow-head');
+          const wrap = el('div', 'hub-srow' + (emptyRow ? ' is-empty' : ''));
+          const head = el('div', 'hub-srow__head');
 
-          const sf = el('label', 'field'); sf.append(el('span', '', 'COLUMN SPLIT'));
-          const ss = el('select');
+          const sf = el('label', 'hub-field'); sf.append(el('span', 'hub-label', 'COLUMN SPLIT'));
+          const ss = el('select', 'hub-select');
           const known = SPLITS.some((p) => p[0] === row.split[0] && p[1] === row.split[1]);
           if (!known) ss.add(new Option(`CUSTOM ${row.split[0]}:${row.split[1]}`, row.split.join(':')));
           for (const p of SPLITS) ss.add(new Option(splitLabel(p), p.join(':')));
@@ -704,18 +338,18 @@
           ss.addEventListener('change', () => { row.split = ss.value.split(':').map(Number); changed(true); });
           sf.append(ss);
 
-          head.append(el('span', 'slot-name', ROW_LABELS[i]), heightInput(row), sf,
-            el('span', 'pct', emptyRow ? 'COLLAPSED' : pct[i] + '% HEIGHT'));
+          head.append(el('span', 'hub-label', ROW_LABELS[i]), heightInput(row), sf,
+            pctBadge(emptyRow, pct[i]));
 
-          const cells = el('div', 'cells');
+          const cells = el('div', 'hub-cells');
           cells.style.gridTemplateColumns = `${row.split[0]}fr ${row.split[1]}fr`;
           ['LEFT', 'RIGHT'].forEach((side, c) => {
             const m = row.cols[c];
             const expand = single && m !== 'none';
-            const slot = el('div', 'slot' + (m === 'none' ? ' empty' : '') + (expand ? ' expand' : ''));
-            slot.append(el('span', 'slot-name', side));
+            const slot = el('div', 'hub-slot' + (m === 'none' ? ' is-empty' : '') + (expand ? ' is-expand' : ''));
+            slot.append(el('span', 'hub-label', side));
             slot.append(moduleSelect(m, (v) => { row.cols[c] = v; changed(true); }));
-            if (expand) slot.append(el('span', 'slot-note', 'AUTO-EXPANDED TO 100% ROW WIDTH'));
+            if (expand) slot.append(el('span', 'nova-chip nova-chip--in_dev', 'AUTO-EXPANDED TO 100% ROW WIDTH'));
             // In single mode the empty cell stays visible below so it can be filled again
             cells.append(slot);
           });
@@ -725,15 +359,15 @@
 
       function render() {
         const land = isLand();
-        for (const b of $$('.mode-btn')) b.classList.toggle('on', b.dataset.orient === cfg.orientation);
-        $('#flip').classList.toggle('on', cfg.flipped);
+        for (const b of $$('.mode-btn')) b.classList.toggle('nova-btn--primary', b.dataset.orient === cfg.orientation);
+        $('#flip').classList.toggle('hub-btn--warn', cfg.flipped);
         $('#flip-state').textContent = cfg.flipped ? 'FLIPPED' : 'NORMAL';
         const deg = land ? (cfg.flipped ? 270 : 90) : (cfg.flipped ? 180 : 0);
         $('#rotation-info').textContent = `DEVICE ROTATION ${deg}° // ` +
           (land ? 'Kindle held sideways, rendered rotated in software' : 'Kindle held upright');
 
         for (const e of $$('[data-path]')) {
-          if (e.classList.contains('toggle')) e.classList.toggle('on', !!get(e.dataset.path));
+          if (e.classList.contains('hub-toggle')) e.classList.toggle('is-on', !!get(e.dataset.path));
           else if (document.activeElement !== e) e.value = get(e.dataset.path);
         }
         const active = activeModules();
@@ -741,13 +375,12 @@
         if (document.activeElement !== $('#report-lines')) $('#report-lines').value = cfg.report.lines.join('\n');
         $('#coords').textContent = `COORD ${cfg.weather.latitude}, ${cfg.weather.longitude}`;
 
-        $('#preview-box').classList.toggle('landscape', land);
-        $('#preview-tag').textContent = '[PRV] KINDLE PREVIEW // ' + (land ? 'LANDSCAPE' : 'PORTRAIT') +
-          (cfg.flipped ? ' // FLIPPED 180°' : '');
+        $('#preview-box').classList.toggle('is-landscape', land);
+        $('#preview-state').textContent = (land ? 'LANDSCAPE' : 'PORTRAIT') + (cfg.flipped ? ' // FLIPPED 180°' : '');
 
         const dirty = JSON.stringify(cfg) !== saved;
         $('#save').disabled = !dirty;
-        if (dirty) setStatus('UNSAVED CHANGES', true);
+        if (dirty) setStatus('UNSAVED CHANGES', 'warn');
       }
 
       function changed(structural) {
@@ -765,7 +398,7 @@
       }
 
       for (const el of $$('[data-path]')) {
-        if (el.classList.contains('toggle')) el.addEventListener('click', () => set(el.dataset.path, !get(el.dataset.path)));
+        if (el.classList.contains('hub-toggle')) el.addEventListener('click', () => set(el.dataset.path, !get(el.dataset.path)));
         else el.addEventListener('input', () => set(el.dataset.path, el.dataset.type === 'number' ? Number(el.value) : el.value));
       }
       for (const b of $$('.mode-btn')) b.addEventListener('click', () => {
@@ -776,10 +409,10 @@
       $('#report-lines').addEventListener('input', (e) => set('report.lines', e.target.value.split('\n')));
 
       $('#save').addEventListener('click', async () => {
-        setStatus('TRANSMITTING…');
+        setStatus('TRANSMITTING…', 'warn');
         try {
           const res = await api('/api/config', { method: 'PUT', body: JSON.stringify(cfg) });
-          if (!res.ok) return setStatus('SAVE ERROR', true);
+          if (!res.ok) return setStatus('SAVE ERROR', 'danger');
           cfg = (await res.json()).config; saved = JSON.stringify(cfg);
           buildSchematic(); render(); refreshPreview();
           setStatus('CONFIG COMMITTED // ' + new Date().toLocaleTimeString('en-US'));
@@ -799,7 +432,7 @@
         for (const g of r.results || []) {
           const li = document.createElement('li'), b = document.createElement('button'), d = document.createElement('span');
           b.type = 'button'; b.textContent = g.name + ' ';
-          d.className = 'dim'; d.textContent = `${[g.admin1, g.country].filter(Boolean).join(', ')} // ${g.latitude.toFixed(2)}, ${g.longitude.toFixed(2)}`;
+          d.className = 'hub-dim'; d.textContent = `${[g.admin1, g.country].filter(Boolean).join(', ')} // ${g.latitude.toFixed(2)}, ${g.longitude.toFixed(2)}`;
           b.append(d);
           b.addEventListener('click', () => {
             cfg.weather.label = g.name; cfg.weather.latitude = g.latitude; cfg.weather.longitude = g.longitude;
@@ -817,7 +450,7 @@
           const j = await res.json();
           cfg = j.config; saved = JSON.stringify(cfg);
           $('#kindle-url').textContent = j.kindleUrl || 'DASHBOARD_TOKEN NOT CONFIGURED';
-          $('#view-login').hidden = true; $('#view-editor').hidden = false;
+          $('#view-login').hidden = true; $('#view-editor').hidden = false; $('#header-actions').hidden = false;
           setStatus('CONFIG LOADED');
           buildSchematic();
           render(); refreshPreview();
@@ -826,7 +459,7 @@
 
       boot();
     })();
-  </script>
+    </script>
 </body>
 
 </html>

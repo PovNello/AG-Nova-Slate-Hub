@@ -1,16 +1,47 @@
 {
   "outputDirectory": "public",
   "rewrites": [
-    { "source": "/dashboard", "destination": "/api/dashboard" },
-    { "source": "/admin", "destination": "/admin.html" }
+    {
+      "source": "/dashboard",
+      "destination": "/api/dashboard"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    }
   ],
   "headers": [
-    { "source": "/(.*)", "headers": [
-      { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-      { "key": "Referrer-Policy", "value": "no-referrer" }
-    ]}
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
   ],
   "crons": [
-    { "path": "/api/keepalive", "schedule": "0 4 * * *" }
+    {
+      "path": "/api/keepalive",
+      "schedule": "0 4 * * *"
+    }
   ]
 }

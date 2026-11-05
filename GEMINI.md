@@ -38,6 +38,13 @@ For Claude agent instructions, see [CLAUDE.md](file:///c:/Gemini%20projects/AG%2
 - If an action modifies architectural behavior, slot logic, layout mechanics, endpoints, or configuration, the agent MUST immediately update or create relevant documentation (e.g. `ARCHITECTURE.md`, `README.md`).
 - Never complete a task or user turn without ensuring `CHANGELOG.md` reflects all changes made.
 
+### 6. Visual System (Admin & Landing)
+- `public/css/01-tokens.css` to `06-responsive.css` are vendored copies of the AG Nova visual framework. **Never edit them**; replace a file as a whole when the framework is updated.
+- Slate Hub specific components live only in `public/css/08-slatehub.css`, use the `hub-` prefix, and are built exclusively from `var(--...)` tokens. No hard-coded colours or font stacks in `08-slatehub.css` or inline styles (the `theme-color` meta tag is the only exception), and spacing comes from the `--sp-*` scale wherever one exists.
+- Colours are semantic: cyan = live / operational, orange = in progress or warning, ivory = knowledge and N.O.V.A. voice, danger = genuine failure only.
+- Fonts (Space Grotesk, Inter Tight, IBM Plex Mono) are self-hosted in `public/fonts/` and declared in `public/css/00-fonts.css`. Do not add third-party font CDNs.
+- The Kindle dashboard (`lib/render.js`) is exempt from the colour system: it stays monochrome `#000` / `#fff`. Only its font family follows the brand (IBM Plex Mono, with Courier New as fallback).
+
 ---
 
 ## 2. Architecture & File Reference
@@ -60,8 +67,11 @@ ag-nova-slate-hub/
 │   ├── security.js       # safeEqual, session signing, IP detection
 │   └── weather.js        # Open-Meteo API client & WMO condition mapper
 ├── public/               # Static assets
-│   ├── admin.html        # NASA-punk terminal admin UI
-│   └── index.html        # Fallback landing page
+│   ├── admin.html        # NASA-punk terminal admin UI (inline JS, framework CSS)
+│   ├── index.html        # Signal terminal landing page
+│   ├── css/              # 00 fonts, 01-06 vendored AG Nova framework, 08 Slate Hub extensions
+│   ├── fonts/            # Self-hosted Space Grotesk, Inter Tight, IBM Plex Mono
+│   └── js/               # nova-shell.js (entrance animation release, stardate)
 ├── vercel.json           # URL rewrites, security headers, cron schedules
 └── package.json          # Package manifest (@upstash/redis)
 ```

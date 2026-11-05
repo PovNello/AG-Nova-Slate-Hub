@@ -1,0 +1,213 @@
+/* ==========================================================================
+   AG NOVA — 06 RESPONSIVE
+   Content is never removed on smaller screens. It is re-racked.
+   Desktop  : full diagnostic terminal
+   Tablet   : two-column rack
+   Mobile   : POCKET DATAPAD — vertical stack, same density, same records
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TABLET — 1024px and below
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+
+  :root {
+    --shell-pad: var(--sp-4);
+    --panel-gap: var(--sp-3);
+  }
+
+  /* The Bridge collapses from three tiers into paired panels */
+  .nova-grid--bridge > .nova-span-expedition { grid-column: span 12; }
+  .nova-grid--bridge > .nova-span-missions   { grid-column: span 12; }
+  .nova-grid--bridge > .nova-span-signal     { grid-column: span 6; }
+  .nova-grid--bridge > .nova-span-report     { grid-column: span 6; }
+  .nova-grid--bridge > .nova-span-archive    { grid-column: span 6; }
+  .nova-grid--bridge > .nova-span-log        { grid-column: span 6; }
+
+  .nova-span-4,
+  .nova-span-5,
+  .nova-span-7,
+  .nova-span-8 { grid-column: span 12; }
+
+  /* Technical sidebars move below the content they describe */
+  .nova-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nova-key {
+    font-size: var(--fs-tiny);
+    letter-spacing: var(--ls-wide);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE — 768px and below — POCKET DATAPAD MODE
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+  :root {
+    --shell-pad: var(--sp-3);
+    --panel-gap: var(--sp-3);
+    --chamfer: 8px;
+    --taskbar-h: 52px;
+  }
+
+  /* Everything becomes a single vertical rack. Order is set below. */
+  .nova-grid,
+  .nova-grid--bridge > * {
+    grid-template-columns: minmax(0, 1fr);
+    grid-column: span 1 !important;
+  }
+
+  /* Reading order on a datapad: context first, then N.O.V.A.'s assessment,
+     then the work, then the notes, then the ambient telemetry. */
+  .nova-grid--bridge > .nova-span-expedition { order: 1; }
+  .nova-grid--bridge > .nova-span-report     { order: 2; }
+  .nova-grid--bridge > .nova-span-missions   { order: 3; }
+  .nova-grid--bridge > .nova-span-log        { order: 4; }
+  .nova-grid--bridge > .nova-span-signal     { order: 5; }
+  .nova-grid--bridge > .nova-span-archive    { order: 6; }
+
+  /* Header keeps the brand and drops to a second line for telemetry */
+  .nova-header {
+    flex-wrap: wrap;
+    padding: var(--sp-2) var(--sp-3);
+    gap: var(--sp-2);
+  }
+
+  .nova-header__divider { display: none; }
+
+  .nova-header__telemetry {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+    gap: var(--sp-3);
+    padding-top: var(--sp-2);
+    border-top: var(--border-thin) dashed var(--nova-grid);
+  }
+
+  /* Taskbar switches to abbreviated key caps so all six sections stay
+     reachable without a hamburger menu or horizontal scroll. */
+  .nova-key__long  { display: none; }
+  .nova-key__short { display: inline; }
+
+  .nova-key {
+    padding: var(--sp-2) 2px;
+    font-size: var(--fs-micro);
+    letter-spacing: 0.06em;
+  }
+
+  .nova-taskbar {
+    padding: var(--sp-2);
+    padding-bottom: calc(var(--sp-2) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .nova-taskbar__inner { gap: var(--sp-1); }
+  .nova-taskbar__keys  { gap: var(--sp-1); }
+
+  /* The taskbar status readout is ambient decoration. It is the only thing
+     dropped on mobile, because the space is worth more to the keys. */
+  .nova-taskbar__status { display: none; }
+
+  /* Mission rows restack: icon and title on one line, telemetry beneath */
+  .nova-mission {
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-areas:
+      "icon main"
+      "side side";
+    gap: var(--sp-3);
+    padding: var(--sp-3);
+  }
+
+  .nova-mission__icon { grid-area: icon; width: 44px; height: 44px; }
+  .nova-mission__main { grid-area: main; }
+
+  .nova-mission__side {
+    grid-area: side;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    padding-top: var(--sp-2);
+    border-top: var(--border-thin) dashed var(--nova-grid);
+  }
+
+  .nova-mission__side .nova-progress { flex: 1; }
+
+  .nova-page-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nova-page-head__meta { text-align: left; }
+
+  .nova-dossier__title { font-size: var(--fs-large); }
+
+  .nova-dossier__hero {
+    min-height: 150px;
+    padding: var(--sp-5);
+  }
+
+  .nova-dossier__logo { max-height: 92px; }
+
+  .nova-dossier__actions .nova-btn { flex: 1; justify-content: center; }
+
+  .nova-data__label { min-width: 45%; }
+
+  .nova-boot { padding: var(--sp-4); }
+}
+
+/* --------------------------------------------------------------------------
+   NARROW MOBILE — 380px and below
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 380px) {
+
+  .nova-key {
+    font-size: 0.5625rem;
+    letter-spacing: 0.02em;
+    padding: var(--sp-2) 1px;
+  }
+
+  .nova-header__sub { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   LARGE DESKTOP — keep density instead of stretching panels thin
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1800px) {
+  :root {
+    --panel-gap: var(--sp-5);
+    --shell-pad: var(--sp-6);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   PRINT — the archive should survive being put on paper
+   -------------------------------------------------------------------------- */
+
+@media print {
+
+  .nova-taskbar,
+  .nova-boot,
+  .nova-retrieve,
+  .nova-feed { display: none !important; }
+
+  body {
+    background: #fff;
+    color: #000;
+    padding-bottom: 0;
+  }
+
+  .nova-panel {
+    border: 1px solid #000;
+    clip-path: none;
+    break-inside: avoid;
+    animation: none;
+  }
+
+  .nova-panel::before { display: none; }
+}

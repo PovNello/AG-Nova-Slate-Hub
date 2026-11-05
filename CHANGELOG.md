@@ -9,6 +9,33 @@ For installation and quickstart, refer to [README.md](file:///c:/Gemini%20projec
 
 ---
 
+## [0.5.0] - 2026-11-05
+
+#### Added
+- **AG Nova Visual System**: `public/admin.html` and `public/index.html` now load the shared AG Nova CSS framework from `public/css/` (`01-tokens.css`, `02-base.css`, `03-layout.css`, `04-components.css`, `05-animations.css`, `06-responsive.css`) instead of carrying their own inline `:root` palette and component styles. The six framework files are vendored unmodified.
+- **`public/css/08-slatehub.css`**: Slate Hub extensions (form controls, toggle switch, slot schematic, e-reader preview bezel, geocoding list, login and landing cards). Built only from design tokens, `hub-` prefixed, no hard-coded colours.
+- **Self-hosted fonts**: Space Grotesk, Inter Tight and IBM Plex Mono in `public/fonts/`, declared in `public/css/00-fonts.css` (SIL OFL 1.1, Latin subset). No third-party font requests.
+- **OS shell**: Header strip with stardate readout, page header, panels with head bar and state code, and a fixed taskbar (`HUB`, `ADMIN CONSOLE`) with cross-document view transitions.
+- **`public/js/nova-shell.js`**: Releases the panel entrance animation and fills stardate fields (`YY.DOY`, same format as the Kindle dashboard).
+- **Landing page**: `[SYS] MANIFEST` panel with device and platform data rows and an N.O.V.A. system note.
+- **Status chips**: Admin status uses semantic chips (`LIVE` cyan, `IN_DEV` orange for unsaved or transmitting, `CRITICAL` danger for save errors).
+
+#### Changed
+- **Palette and typography**: Navy chassis surfaces, `#8FD8E0` cyan, `#E6822F` orange, ivory and four text tiers replace the previous neutral dark grey palette and the single monospace stack.
+- **Geometry**: Two-corner 10px chamfer, 2px structural borders, square status pulse, hard-edged chips and inputs.
+- **Admin markup**: Slot schematic, toggles, mode buttons and status are generated with framework and `hub-` classes. Behaviour, API calls and configuration schema are unchanged.
+- **Login failures** (wrong PIN, lockout) use the danger colour instead of orange.
+- **Landing footer copy**: Removed the "UNAUTHORISED ACCESS PROHIBITED" line in favour of in-universe wording that matches the civilian research-laboratory tone.
+- **Kindle dashboard font**: `lib/render.js` now declares IBM Plex Mono 400 / 700 (WOFF2 plus WOFF fallback) ahead of Courier New. Colours, layout engine, scaling constants and the ES5 clock script are untouched.
+- **`vercel.json`**: `/fonts/*` is served with a one-week cache and `Access-Control-Allow-Origin: *` (required by the sandboxed admin preview iframe).
+- **Documentation**: Added the Visual System section to `ARCHITECTURE.md` and a Visual System invariant to `AGENTS.md`, `CLAUDE.md` and `GEMINI.md`. Updated directory trees in `README.md`.
+- **`package.json`**: Version 0.5.0.
+
+#### Removed
+- Inline `<style>` blocks and the local `--bg`, `--panel`, `--line`, `--cyan` variable set from `admin.html` and `index.html`.
+
+---
+
 ## [0.4.2] - 2026-11-05
 
 ### Added

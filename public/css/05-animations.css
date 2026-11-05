@@ -1,0 +1,333 @@
+/* ==========================================================================
+   AG NOVA — 05 ANIMATIONS
+   All motion lives here: page transitions, boot sequence, ambient pulses.
+   Deleting this file leaves a fully functional, completely static terminal.
+   That is deliberate. Motion is a layer, never a dependency.
+   ========================================================================== */
+
+/* ==========================================================================
+   CROSS-DOCUMENT VIEW TRANSITIONS
+   This single at-rule opts every same-origin navigation into a native
+   browser transition. No router, no JavaScript, real HTML pages underneath.
+   Supported in Chromium 126+ and Safari 18.2+. Firefox falls back to a
+   normal navigation, which still works — it just is not animated.
+   ========================================================================== */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* The header and taskbar are named in 03-layout.css. Because both documents
+   use the same names, the browser treats them as one continuous element and
+   holds them in place instead of cross-fading them. That is what makes this
+   feel like an OS rather than a website. */
+
+/* Only the viewport animates. This is the [ RETRIEVING DATA ] moment:
+   the outgoing screen collapses its brightness like a CRT losing signal,
+   the incoming screen scans back in. */
+
+::view-transition-old(nova-viewport) {
+  animation: nova-signal-drop var(--t-navigation) var(--ease-mechanical) both;
+}
+
+::view-transition-new(nova-viewport) {
+  animation: nova-signal-acquire var(--t-navigation) var(--ease-mechanical) both;
+}
+
+@keyframes nova-signal-drop {
+  0% {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scaleY(1);
+  }
+  55% {
+    opacity: 0.5;
+    filter: brightness(1.5) saturate(0.4);
+    transform: translateY(0) scaleY(0.996);
+  }
+  100% {
+    opacity: 0;
+    filter: brightness(0.5) saturate(0);
+    transform: translateY(-6px) scaleY(0.99);
+  }
+}
+
+@keyframes nova-signal-acquire {
+  0% {
+    opacity: 0;
+    filter: brightness(1.9) saturate(0.2);
+    transform: translateY(8px) scaleY(0.985);
+    clip-path: inset(0 0 100% 0);
+  }
+  42% {
+    opacity: 0.85;
+    filter: brightness(1.18) saturate(0.75);
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scaleY(1);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The taskbar is held, not animated, so no keyframes are defined for it.
+   Declaring it as a named transition group with no animation is what pins it. */
+::view-transition-group(nova-taskbar) {
+  animation: none;
+}
+
+/* ==========================================================================
+   RETRIEVING OVERLAY
+   Disabled as per user request.
+   ========================================================================== */
+
+.nova-retrieve {
+  display: none !important;
+}
+
+/* ==========================================================================
+   BOOT SEQUENCE
+   Runs once per browser session on a genuine load. Never on navigation.
+   ========================================================================== */
+
+.nova-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--sp-8);
+  background: var(--nova-space);
+}
+
+.nova-boot.is-active {
+  display: flex;
+}
+
+.nova-boot.is-closing {
+  animation: nova-boot-out 420ms var(--ease-mechanical) both;
+}
+
+.nova-boot__inner {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.nova-boot__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-6);
+  padding-bottom: var(--sp-3);
+  border-bottom: var(--border-thin) solid var(--nova-grid);
+}
+
+.nova-boot__brand img {
+  width: 34px;
+  height: 34px;
+}
+
+.nova-boot__brand span {
+  font-family: var(--font-heading);
+  font-size: var(--fs-mid);
+  font-weight: 600;
+  letter-spacing: var(--ls-wider);
+  color: var(--nova-text-primary);
+  text-transform: uppercase;
+}
+
+.nova-boot__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-height: 200px;
+}
+
+.nova-boot__line {
+  display: flex;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-tiny);
+  letter-spacing: var(--ls-data);
+  color: var(--nova-text-muted);
+  opacity: 0;
+  animation: nova-boot-line 160ms var(--ease-snap) both;
+}
+
+.nova-boot__line b {
+  color: var(--nova-cyan);
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.nova-boot__line i {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--nova-cyan);
+  flex-shrink: 0;
+}
+
+.nova-boot__bar {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  margin-top: var(--sp-6);
+  padding: 2px;
+  border: var(--border-thin) solid var(--nova-grid);
+}
+
+.nova-boot__bar span {
+  flex: 1;
+  background: var(--nova-grid);
+}
+
+.nova-boot__bar span.is-on {
+  background: var(--nova-cyan);
+}
+
+@keyframes nova-boot-line {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes nova-boot-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ==========================================================================
+   AMBIENT MICRO-MOVEMENT
+   Persistent, quiet evidence that the reactors are running.
+   ========================================================================== */
+
+/* Live status dot in the header and taskbar */
+.nova-pulse {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--nova-cyan);
+  animation: nova-pulse 2.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.nova-pulse--orange { background: var(--nova-orange); }
+
+@keyframes nova-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.28; }
+}
+
+/* Blinking terminal caret used after live text */
+.nova-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  vertical-align: text-bottom;
+  background: var(--nova-cyan);
+  animation: nova-blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes nova-blink {
+  0%, 50%   { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* New log feed lines slide in rather than pop */
+.nova-feed__line--fresh {
+  animation: nova-feed-in 260ms var(--ease-snap) both;
+}
+
+@keyframes nova-feed-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Panels settle into place on first paint. Staggered by index in the HTML. */
+.nova-panel {
+  animation: nova-panel-flicker 400ms linear both;
+  animation-delay: calc(var(--panel-index, 0) * 60ms);
+  animation-play-state: paused;
+}
+
+.is-ready .nova-panel {
+  animation-play-state: running;
+}
+
+@keyframes nova-panel-flicker {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.8; }
+  25%  { opacity: 0.2; }
+  40%  { opacity: 0.9; }
+  55%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+/* ==========================================================================
+   TEXT FLICKER
+   Analog signal resolution for headings and metadata on load.
+   ========================================================================== */
+
+.nova-page-head__title,
+.nova-page-head__desc,
+.nova-page-head__meta,
+.nova-page-head .nova-meta {
+  animation: nova-panel-flicker 400ms linear both;
+  animation-play-state: paused;
+}
+
+.is-ready .nova-page-head__title,
+.is-ready .nova-page-head__desc,
+.is-ready .nova-page-head__meta,
+.is-ready .nova-page-head .nova-meta {
+  animation-play-state: running;
+}
+
+.nova-page-head__title,
+.nova-page-head .nova-meta {
+  animation-delay: 40ms;
+}
+
+.nova-page-head__desc {
+  animation-delay: 100ms;
+}
+
+.nova-page-head__meta {
+  animation-delay: 160ms;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Every animation above is decorative. When the visitor asks for stillness,
+   the terminal becomes still, and nothing becomes unreachable.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .nova-retrieve,
+  .nova-boot {
+    display: none !important;
+  }
+
+  .nova-panel {
+    opacity: 1;
+    transform: none;
+  }
+}

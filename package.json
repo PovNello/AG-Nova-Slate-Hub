@@ -1,6 +1,6 @@
 {
   "name": "ag-nova-slate-hub",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "AG Nova Slate Hub - Minimalist e-ink dashboard for Kindle Paperwhite with slot-based admin UI",
   "private": true,
   "type": "module",

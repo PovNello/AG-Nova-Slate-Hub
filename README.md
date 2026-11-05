@@ -45,6 +45,7 @@ For AI agent context and coding invariants, see [AGENTS.md](file:///c:/Gemini%20
   - `weather`: Real-time weather, min/max, humidity, wind, and forecast tables via Open-Meteo (no API key required).
   - `report`: Dynamic NASA-punk logs or custom status notes.
   - `none`: Empty slots for asymmetrical compositions.
+- **AG Nova Visual System**: Admin panel and landing page are built on the shared AG Nova CSS framework (design tokens, panels, taskbar, motion) with self-hosted fonts. The Kindle dashboard stays monochrome for e-ink.
 - **Secure Administration Panel**: Accessible at `/admin`, protected by an 8+ character PIN, HMAC-signed session cookies, and IP rate limiting (5 attempts per 15 min).
 - **Automated Database Keepalive**: Built-in Vercel cron handler (`/api/keepalive`) runs daily to prevent Upstash Redis free-tier instances from becoming inactive.
 
@@ -61,7 +62,7 @@ api/            # Vercel serverless endpoints
   preview.js    # Live draft preview rendering (authenticated)
   keepalive.js  # Scheduled cron keepalive against Upstash archiving
 lib/            # Shared business logic (render, weather, redis, security)
-public/         # Static assets (admin.html, index.html)
+public/         # Static assets (admin.html, index.html, css/, fonts/, js/)
 vercel.json     # Routing rewrites, security headers, and cron schedules
 ```
 
