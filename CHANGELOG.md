@@ -9,6 +9,16 @@ For installation and quickstart, refer to [README.md](file:///c:/Gemini%20projec
 
 ---
 
+## [0.4.2] - 2026-11-05
+
+### Added
+- **Landing Page** (`public/index.html`): Replaced the bare "SIGNAL NOT FOUND" placeholder with a full NASA-punk landing page matching the admin UI/UX. Features: branded topbar with logo + pulsing LED, hero block with 96px logo and system tagline, two mission cards — `[01] ADMIN` (direct link to `/admin`) and `[02] DASHBOARD` (token input field + dynamic link to `/dashboard?token=...`), and a footer with system status indicator. No new dependencies; vanilla JS ES5-compatible.
+
+### Changed
+- **`public/index.html`**: Fully rewritten from a one-line stub to a complete styled landing page.
+
+---
+
 ## [0.4.1] - 2026-11-05
 
 ### Added
