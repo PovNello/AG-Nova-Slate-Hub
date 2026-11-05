@@ -331,7 +331,7 @@
     var inp = document.getElementById('token-input');
     function updateLink() {
       var t = inp.value.trim();
-      btn.href = t ? '/dashboard?token=' + encodeURIComponent(t) : '#';
+      btn.href = t ? '/dashboard?k=' + encodeURIComponent(t) : '#';
       btn.style.opacity = t ? '1' : '0.5';
     }
     inp.addEventListener('input', updateLink);
