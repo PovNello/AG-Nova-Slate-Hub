@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="256" height="256" role="img" aria-label="AG Nova Slate Hub Logo">
+  <!-- Tablet Bezel with Chamfered Style -->
+  <rect x="8" y="10" width="84" height="80" rx="6" fill="#142437" stroke="#8FD8E0" stroke-width="3.5" stroke-linejoin="round"/>
+  
+  <!-- Outer Screen Frame -->
+  <rect x="15" y="17" width="70" height="66" rx="2" fill="#0C1726" stroke="#8FD8E0" stroke-width="1.5" stroke-opacity="0.6"/>
+
+  <!-- Row 1: Chronometer / Header Row (Weight 1) -->
+  <rect x="19" y="21" width="62" height="18" fill="#142437" stroke="#8FD8E0" stroke-width="1.5"/>
+  <!-- Clock ticks / digits indicator -->
+  <line x1="26" y1="30" x2="38" y2="30" stroke="#DCCFAA" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="43" cy="28" r="1.5" fill="#8FD8E0"/>
+  <circle cx="43" cy="32" r="1.5" fill="#8FD8E0"/>
+  <line x1="48" y1="30" x2="60" y2="30" stroke="#DCCFAA" stroke-width="3" stroke-linecap="round"/>
+  <rect x="67" y="25" width="10" height="10" fill="#8FD8E0" opacity="0.3"/>
+
+  <!-- Row 2: Split Columns (Landscape 60/40 preset) -->
+  <!-- Left column: Weather / Telemetry -->
+  <rect x="19" y="43" width="35" height="23" fill="#142437" stroke="#8FD8E0" stroke-width="1.5"/>
+  <circle cx="28" cy="54" r="5" fill="none" stroke="#E6822F" stroke-width="2"/>
+  <path d="M26 57 Q32 50 40 55" fill="none" stroke="#8FD8E0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="42" y1="49" x2="50" y2="49" stroke="#DCCFAA" stroke-width="1.5"/>
+  <line x1="42" y1="55" x2="48" y2="55" stroke="#8FD8E0" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Right column: Atmosphere / Metrics -->
+  <rect x="58" y="43" width="23" height="23" fill="#142437" stroke="#8FD8E0" stroke-width="1.5"/>
+  <rect x="62" y="48" width="15" height="4" fill="#8FD8E0" opacity="0.8"/>
+  <rect x="62" y="55" width="10" height="4" fill="#DCCFAA" opacity="0.8"/>
+
+  <!-- Row 3: Tactical Report / Status Bar -->
+  <rect x="19" y="70" width="62" height="9" fill="#142437" stroke="#8FD8E0" stroke-width="1.5"/>
+  <line x1="23" y1="74.5" x2="45" y2="74.5" stroke="#8FD8E0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="49" y1="74.5" x2="77" y2="74.5" stroke="#DCCFAA" stroke-width="1.5" stroke-dasharray="3 2"/>
+</svg>
+

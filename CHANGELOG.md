@@ -9,6 +9,17 @@ For installation and quickstart, refer to [README.md](file:///c:/Gemini%20projec
 
 ---
 
+## [0.4.1] - 2026-11-05
+
+### Added
+- **Brand Logo / Favicon**: Added `slate-hub-logo.svg` as the site favicon (`<link rel="icon" type="image/svg+xml">`) in both `public/admin.html` and `public/index.html`.
+- **Logo in Nav/Status Bar**: The SVG logo now appears at the far left of the admin topbar (before the pulsing LED and "AG NOVA SLATE HUB // TERMINAL CONFIG" text) and in the login header (before the LED and "AG NOVA SLATE HUB // ADMIN TERMINAL").
+
+### Changed
+- **Asset Location**: Moved `slate-hub-logo.svg` from the project root to `public/` — the correct static-asset directory served by Vercel.
+
+---
+
 ## [0.4.0] - 2026-11-03
 
 ### Added
